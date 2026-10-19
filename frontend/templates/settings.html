@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NEXFlow — Team Responsibility Management System. Settings & RACI Policies.">
+  <title>Settings | NEXFlow</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Core NEXFlow CSS -->
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- 1. SIDEBAR NAVIGATION -->
+    <aside id="app-sidebar" class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-link">
+          <img src="../images/logo-icon.svg" alt="NEXFlow Icon" class="brand-icon">
+          <div class="brand-text">
+            <span class="brand-name">NEX<span>Flow</span></span>
+            <span class="brand-badge">RESPONSIBILITY</span>
+          </div>
+        </a>
+        <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Toggle Sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Core Management</div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </span>
+                <span class="nav-text">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tasks.html" class="nav-link">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
+                </span>
+                <span class="nav-text">Tasks & RACI</span>
+                <span class="nav-badge">12</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="team.html" class="nav-link">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-text">RACI Matrix & Team</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="meetings.html" class="nav-link">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-text">Meetings & Minutes</span>
+                <span class="nav-badge">2</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Workspace</div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="reports.html" class="nav-link">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-text">Responsibility Reports</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="settings.html" class="nav-link active">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </span>
+                <span class="nav-text">Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="team-pill">
+          <div class="team-avatar">NX</div>
+          <div class="team-info">
+            <span class="team-name">Alpha Engineering</span>
+            <span class="team-role">5 Active Members</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. APP MAIN WRAPPER -->
+    <div class="app-main-wrapper">
+      <header class="app-header">
+        <div class="header-left">
+          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="header-search">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input type="text" id="global-search-input" class="search-input" placeholder="Search tasks, RACI roles, meetings...">
+            <kbd class="search-kbd">Ctrl+K</kbd>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Settings saved successfully!', 'success', 2500);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Save Changes</span>
+          </button>
+
+          <button id="theme-toggle-btn" class="header-btn" title="Toggle Theme">
+            <span class="theme-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </span>
+          </button>
+
+          <div class="dropdown user-profile-menu">
+            <button class="user-profile-btn" data-dropdown-target="user-dropdown-menu">
+              <div class="user-avatar-wrap">
+                <img src="../images/avatar-1.svg" alt="Alex Morgan" class="user-avatar">
+                <span class="user-status-indicator"></span>
+              </div>
+              <div class="user-details">
+                <span class="user-name">Alex Morgan</span>
+                <span class="user-role-badge">Team Lead</span>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="user-dropdown-menu" class="dropdown-menu">
+              <a href="settings.html" class="dropdown-item">My Profile</a>
+              <a href="team.html" class="dropdown-item">Team Roles</a>
+              <div class="dropdown-divider"></div>
+              <a href="login.html" class="dropdown-item" style="color: var(--color-danger);">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="page-header-bar">
+          <div class="page-title-group">
+            <h1>System & Team Settings</h1>
+            <p>Configure team workspaces, customize RACI responsibility policies, and manage preferences.</p>
+          </div>
+          <div class="page-actions-group">
+            <button class="btn btn-primary" onclick="showToast('Settings saved successfully!', 'success', 2500);">
+              <span>Save Changes</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; align-items: start;">
+          <div class="card" style="padding: 12px;">
+            <ul class="nav-list">
+              <li><a href="#general" class="nav-link active" style="color: #FFFFFF;"><span>Team Workspace</span></a></li>
+              <li><a href="#raci-policy" class="nav-link" style="color: var(--text-primary);"><span>RACI Governance Policy</span></a></li>
+              <li><a href="#profile" class="nav-link" style="color: var(--text-primary);"><span>My Profile & Preferences</span></a></li>
+            </ul>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="card" id="general">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title">Team Workspace Configuration</h2>
+                  <p class="card-subtitle">Organization details and team identifiers</p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Team Workspace Name</label>
+                <input type="text" class="form-input" value="Alpha Engineering Core">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Project Domain / Responsibility Scope</label>
+                <input type="text" class="form-input" value="Nexora Responsibility Architecture">
+              </div>
+            </div>
+
+            <div class="card" id="raci-policy">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title">RACI Responsibility Governance</h2>
+                  <p class="card-subtitle">Rules to ensure clean accountability without overlap</p>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+                  <input type="checkbox" checked style="margin-top: 4px;">
+                  <div>
+                    <strong style="font-size: 0.875rem; color: var(--text-primary);">Enforce Exactly One Accountable (A) Owner</strong>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">
+                      Blocks task creation if no Accountable owner is designated, or if more than one Accountable person is assigned.
+                    </p>
+                  </div>
+                </label>
+
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+                  <input type="checkbox" checked style="margin-top: 4px;">
+                  <div>
+                    <strong style="font-size: 0.875rem; color: var(--text-primary);">Auto-Notify Informed (I) Stakeholders</strong>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">
+                      Sends an instant in-app digest to Informed members when a task moves from Review to Completed.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

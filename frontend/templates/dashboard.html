@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | NEXFlow — Team Responsibility Management System{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" onerror="this.onerror=null;this.href='../css/dashboard.css';">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header Bar -->
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>Team Responsibility Dashboard</h1>
+    <p>Real-time visibility into RACI assignments, deliverable ownership, and team capacity.</p>
+  </div>
+  <div class="page-actions-group">
+    <button class="btn btn-secondary" onclick="showToast('Refreshing team status...', 'info', 1500);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+      <span>Refresh</span>
+    </button>
+    <a href="tasks.html" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"></path>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+      <span>View All Tasks</span>
+    </a>
+  </div>
+</div>
+
+<!-- ====================================================================
+     1. HIGH LEVEL METRIC CARDS
+     ==================================================================== -->
+<section class="stats-grid">
+  <!-- Stat 1: Total Responsibilities -->
+  <div class="stat-card stat-primary">
+    <div class="stat-info">
+      <span class="stat-label">Task Done</span>
+      <span class="stat-value">28</span>
+      <span class="stat-trend positive">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        +12% from last sprint
+      </span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"></path>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stat 2: My Assigned (R/A) -->
+  <div class="stat-card stat-accent">
+    <div class="stat-info">
+      <span class="stat-label">My Roles (R/A)</span>
+      <span class="stat-value">6</span>
+      <span class="stat-trend neutral">2 due today</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stat 3: Team Completion Rate -->
+  <div class="stat-card stat-success">
+    <div class="stat-info">
+      <span class="stat-label">Completion Velocity</span>
+      <span class="stat-value">84%</span>
+      <span class="stat-trend positive">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        +6% on-time rate
+      </span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stat 4: Upcoming Meetings -->
+  <div class="stat-card stat-warning">
+    <div class="stat-info">
+      <span class="stat-label">Upcoming Meetings</span>
+      <span class="stat-value">2</span>
+      <span class="stat-trend negative">Next in 30 mins</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     2. DASHBOARD MAIN CONTENT GRID (LEFT 2/3, RIGHT 1/3)
+     ==================================================================== -->
+<div class="dashboard-grid">
+  <!-- LEFT COLUMN -->
+  <div class="dashboard-col">
+    <!-- Card 1: Task Status Breakdown -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Task Status</h2>
+          <p class="card-subtitle">Real-time delivery progress across active sprint tasks</p>
+        </div>
+        <a href="tasks.html" class="btn btn-ghost btn-sm">View Board &rarr;</a>
+      </div>
+
+      <!-- Segmented Bar Visual -->
+      <div class="status-distribution-bar" title="Task Status Breakdown">
+        <div class="status-segment status-segment-completed" style="width: 56%;" title="Completed: 28 tasks (56%)"></div>
+        <div class="status-segment status-segment-progress" style="width: 24%;" title="In Progress: 12 tasks (24%)"></div>
+        <div class="status-segment status-segment-review" style="width: 12%;" title="Under Review: 6 tasks (12%)"></div>
+        <div class="status-segment status-segment-backlog" style="width: 8%;" title="Backlog: 4 tasks (8%)"></div>
+      </div>
+
+      <!-- Status Legend & Metrics Grid -->
+      <div class="status-legend-grid">
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--color-success);"></span>
+            <span>Completed</span>
+          </div>
+          <div class="status-legend-count">28</div>
+          <div class="status-legend-sub">Finished & signed off</div>
+        </div>
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--color-primary);"></span>
+            <span>In Progress</span>
+          </div>
+          <div class="status-legend-count">12</div>
+          <div class="status-legend-sub">Active development</div>
+        </div>
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--color-warning);"></span>
+            <span>Under Review</span>
+          </div>
+          <div class="status-legend-count">6</div>
+          <div class="status-legend-sub">QA & approval</div>
+        </div>
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--text-muted);"></span>
+            <span>Backlog</span>
+          </div>
+          <div class="status-legend-count">4</div>
+          <div class="status-legend-sub">Scheduled & queued</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Priority Tasks & Responsibilities -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Priority Deliverables & Accountability</h2>
+          <p class="card-subtitle">Urgent responsibilities requiring immediate review or completion</p>
+        </div>
+        <button class="btn btn-outline btn-sm" data-modal-open="modal-new-task">+ Add Task</button>
+      </div>
+
+      <div class="task-items-list">
+        <!-- Task Item 1 -->
+        <div class="task-item-row">
+          <div class="task-left-info">
+            <div class="task-checkbox-custom" title="Click to complete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="task-title-wrap">
+              <span class="task-row-title">Finalize Multi-Tenant Role Isolation Schema</span>
+              <div class="task-row-meta">
+                <span class="badge badge-raci-r">R: David Kim</span>
+                <span class="badge badge-raci-a">A: Alex Morgan</span>
+                <span class="badge badge-urgent">Urgent</span>
+                <span>Due Today</span>
+              </div>
+            </div>
+          </div>
+          <div class="avatar-stack">
+            <img src="{% static 'images/avatar-5.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-5.svg';" class="avatar-item" alt="David Kim">
+            <img src="{% static 'images/avatar-1.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-1.svg';" class="avatar-item" alt="Alex Morgan">
+          </div>
+        </div>
+
+        <!-- Task Item 2 -->
+        <div class="task-item-row">
+          <div class="task-left-info">
+            <div class="task-checkbox-custom" title="Click to complete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="task-title-wrap">
+              <span class="task-row-title">Frontend Design System Tokens & Responsive Grid</span>
+              <div class="task-row-meta">
+                <span class="badge badge-raci-r">R: Marcus Vance</span>
+                <span class="badge badge-raci-a">A: Sarah Chen</span>
+                <span class="badge badge-high">High</span>
+                <span>Tomorrow</span>
+              </div>
+            </div>
+          </div>
+          <div class="avatar-stack">
+            <img src="{% static 'images/avatar-3.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-3.svg';" class="avatar-item" alt="Marcus Vance">
+            <img src="{% static 'images/avatar-2.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-2.svg';" class="avatar-item" alt="Sarah Chen">
+          </div>
+        </div>
+
+        <!-- Task Item 3 -->
+        <div class="task-item-row">
+          <div class="task-left-info">
+            <div class="task-checkbox-custom" title="Click to complete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="task-title-wrap">
+              <span class="task-row-title">Meeting Minutes & Action Items Automated Sync</span>
+              <div class="task-row-meta">
+                <span class="badge badge-raci-r">R: Elena Rostova</span>
+                <span class="badge badge-raci-a">A: Alex Morgan</span>
+                <span class="badge badge-medium">Medium</span>
+                <span>In 3 days</span>
+              </div>
+            </div>
+          </div>
+          <div class="avatar-stack">
+            <img src="{% static 'images/avatar-4.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-4.svg';" class="avatar-item" alt="Elena Rostova">
+            <img src="{% static 'images/avatar-1.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-1.svg';" class="avatar-item" alt="Alex Morgan">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="dashboard-col">
+    <!-- Card 3: Team Workload Capacity -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Team Capacity & Workload</h2>
+          <p class="card-subtitle">Active responsibility load per member</p>
+        </div>
+      </div>
+
+      <!-- Member 1 -->
+      <div class="workload-item">
+        <div class="workload-header">
+          <div class="workload-user">
+            <img src="{% static 'images/avatar-1.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-1.svg';" class="workload-avatar" alt="Alex Morgan">
+            <div>
+              <span class="workload-name">Alex Morgan</span>
+              <span class="workload-role">Team Lead & Architect</span>
+            </div>
+          </div>
+          <span class="workload-badge workload-optimal">6 Tasks (Optimal)</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 65%;"></div>
+        </div>
+      </div>
+
+      <!-- Member 2 -->
+      <div class="workload-item">
+        <div class="workload-header">
+          <div class="workload-user">
+            <img src="{% static 'images/avatar-2.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-2.svg';" class="workload-avatar" alt="Sarah Chen">
+            <div>
+              <span class="workload-name">Sarah Chen</span>
+              <span class="workload-role">Fullstack Engineer</span>
+            </div>
+          </div>
+          <span class="workload-badge workload-heavy">8 Tasks (Near Capacity)</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 88%; background: var(--color-warning);"></div>
+        </div>
+      </div>
+
+      <!-- Member 3 -->
+      <div class="workload-item">
+        <div class="workload-header">
+          <div class="workload-user">
+            <img src="{% static 'images/avatar-3.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-3.svg';" class="workload-avatar" alt="Marcus Vance">
+            <div>
+              <span class="workload-name">Marcus Vance</span>
+              <span class="workload-role">Product Designer</span>
+            </div>
+          </div>
+          <span class="workload-badge workload-optimal">5 Tasks (Optimal)</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 50%;"></div>
+        </div>
+      </div>
+
+      <!-- Member 4 -->
+      <div class="workload-item">
+        <div class="workload-header">
+          <div class="workload-user">
+            <img src="{% static 'images/avatar-4.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-4.svg';" class="workload-avatar" alt="Elena Rostova">
+            <div>
+              <span class="workload-name">Elena Rostova</span>
+              <span class="workload-role">QA & DevOps</span>
+            </div>
+          </div>
+          <span class="workload-badge workload-optimal">4 Tasks (Healthy)</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 42%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Recent Activity Stream -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Responsibility Audit Trail</h2>
+          <p class="card-subtitle">Latest changes in roles & assignments</p>
+        </div>
+      </div>
+
+      <div class="activity-stream">
+        <div class="activity-item">
+          <span class="activity-icon-dot" style="background: var(--color-success-bg); color: var(--color-success);">✓</span>
+          <div class="activity-body">
+            <span class="activity-text"><strong>Sarah Chen</strong> completed <em>User Registration Flow</em></span>
+            <span class="activity-time">15 mins ago</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <span class="activity-icon-dot" style="background: var(--color-primary-light); color: var(--color-primary);">R</span>
+          <div class="activity-body">
+            <span class="activity-text"><strong>Alex Morgan</strong> assigned <strong>David Kim</strong> as <em>Responsible</em> for Database Indexing</span>
+            <span class="activity-time">1 hour ago</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <span class="activity-icon-dot" style="background: var(--color-warning-bg); color: var(--color-warning);">📅</span>
+          <div class="activity-body">
+            <span class="activity-text"><strong>Sprint Sync</strong> meeting scheduled for 3:00 PM</span>
+            <span class="activity-time">2 hours ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks.js' %}" onerror="this.onerror=null;this.src='../js/tasks.js';"></script>
+{% endblock %}

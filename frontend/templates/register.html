@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Team Workspace | NEXFlow — Team Responsibility Management System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: var(--bg-body); padding: 20px;">
+
+  <div style="width: 100%; max-width: 480px;">
+    <!-- Logo & Brand Header -->
+    <div style="text-align: center; margin-bottom: 24px;">
+      <a href="index.html" style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <img src="../images/logo-icon.svg" style="width: 42px; height: 42px;" alt="NEXFlow Logo">
+        <span style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">
+          NEX<span style="color: var(--color-primary);">Flow</span>
+        </span>
+      </a>
+      <p style="font-size: 0.875rem; color: var(--text-secondary);">Start your Team Responsibility Workspace</p>
+    </div>
+
+    <!-- Registration Card -->
+    <div class="card" style="padding: 32px; box-shadow: var(--shadow-lg);">
+      <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Create Your Workspace</h2>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 24px;">Set up your team and invite collaborators with clear RACI roles.</p>
+
+      <form id="register-form" action="index.html" method="get">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-input" placeholder="e.g. Alex Morgan" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-team">Team / Organization Name</label>
+          <input type="text" id="reg-team" class="form-input" placeholder="e.g. Alpha Engineering Core" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Work Email</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="alex@company.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <input type="password" id="reg-password" class="form-input" placeholder="At least 8 characters" required>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.8125rem; color: var(--text-secondary); cursor: pointer;">
+            <input type="checkbox" checked required style="margin-top: 3px;">
+            <span>I agree to the Responsibility Governance terms and team privacy policy.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+          Create Workspace & Continue
+        </button>
+      </form>
+    </div>
+
+    <!-- Footer Login Link -->
+    <div style="text-align: center; margin-top: 20px; font-size: 0.8125rem; color: var(--text-secondary);">
+      Already have a workspace? <a href="login.html" style="color: var(--color-primary); font-weight: 700;">Sign In</a>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

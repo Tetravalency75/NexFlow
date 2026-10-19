@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | NEXFlow — Team Responsibility Management System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: var(--bg-body); padding: 20px;">
+
+  <div style="width: 100%; max-width: 440px;">
+    <!-- Logo & Brand Header -->
+    <div style="text-align: center; margin-bottom: 28px;">
+      <a href="index.html" style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <img src="../images/logo-icon.svg" style="width: 42px; height: 42px;" alt="NEXFlow Logo">
+        <span style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">
+          NEX<span style="color: var(--color-primary);">Flow</span>
+        </span>
+      </a>
+      <p style="font-size: 0.875rem; color: var(--text-secondary);">Team Responsibility & RACI Governance</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card" style="padding: 32px; box-shadow: var(--shadow-lg);">
+      <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Welcome Back</h2>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 24px;">Sign in to your team workspace to view active deliverables.</p>
+
+      <form id="login-form" action="index.html" method="get">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Work Email</label>
+          <input type="email" id="login-email" class="form-input" placeholder="alex@company.com" value="alex.morgan@nexflow.io" required>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="login-password">Password</label>
+            <a href="#" style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;" onclick="showToast('Password reset link sent to registered email', 'info'); return false;">Forgot Password?</a>
+          </div>
+          <input type="password" id="login-password" class="form-input" value="••••••••••••" required>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--text-secondary); cursor: pointer;">
+            <input type="checkbox" checked>
+            <span>Remember for 30 days</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+          Sign In to Workspace
+        </button>
+      </form>
+
+      <!-- Quick Demo Account Fillers -->
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-color); text-align: center;">
+        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 10px;">Quick Demo Accounts:</span>
+        <div style="display: flex; gap: 8px; justify-content: center;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='alex.morgan@nexflow.io'; showToast('Filled Alex Morgan (Lead)', 'info');">
+            Alex (Lead)
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('login-email').value='sarah.chen@nexflow.io'; showToast('Filled Sarah Chen (Dev)', 'info');">
+            Sarah (Dev)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Register Link -->
+    <div style="text-align: center; margin-top: 20px; font-size: 0.8125rem; color: var(--text-secondary);">
+      Don't have an account yet? <a href="register.html" style="color: var(--color-primary); font-weight: 700;">Create Workspace</a>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

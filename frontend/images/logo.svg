@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60" fill="none">
+  <defs>
+    <linearGradient id="nexflow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="50%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="nexflow-accent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Logo Emblem: Flowing Hexagonal Nodes representing connected team responsibility -->
+  <g transform="translate(10, 8)">
+    <!-- Hexagon Outer Node 1 -->
+    <path d="M 22 2 L 36 10 L 36 26 L 22 34 L 8 26 L 8 10 Z" fill="url(#nexflow-grad)" opacity="0.9" />
+    <!-- Dynamic Flow Waves inside emblem -->
+    <path d="M 14 14 Q 22 8 30 18 T 22 28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <!-- Pulse Center Dot -->
+    <circle cx="22" cy="18" r="3.5" fill="#FFFFFF" />
+    <circle cx="34" cy="11" r="2.5" fill="url(#nexflow-accent)" />
+    <circle cx="10" cy="25" r="2" fill="#06B6D4" />
+    <!-- Responsibility Connection Links -->
+    <line x1="22" y1="18" x2="34" y2="11" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.8" />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="62" y="32" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" letter-spacing="-0.5" fill="currentColor" class="brand-title">
+    NEX<tspan fill="#6366F1">Flow</tspan>
+  </text>
+  <text x="63" y="45" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="600" letter-spacing="1.2" fill="#64748B" text-transform="uppercase" class="brand-subtitle">
+    RESPONSIBILITY MATRIX
+  </text>
+</svg>

@@ -1,0 +1,352 @@
+<!-- {% load static %} -->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NEXFlow — Team Responsibility Management System. Manage RACI matrices, task accountability, and meeting action items.">
+  <title>{% block title %}NEXFlow — Team Responsibility Management System{% endblock %}</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Core NEXFlow CSS -->
+  <link rel="stylesheet" href="../css/main.css">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <div class="app-container">
+    <!-- ====================================================================
+         1. SIDEBAR NAVIGATION
+         ==================================================================== -->
+    <aside id="app-sidebar" class="app-sidebar">
+      <!-- Sidebar Brand Header -->
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <img src="{% static 'images/logo-icon.svg' %}" onerror="this.onerror=null;this.src='../images/logo-icon.svg';" alt="NEXFlow Icon" class="brand-icon">
+          <div class="brand-text">
+            <span class="brand-name">NEX<span>Flow</span></span>
+            <span class="brand-badge">RESPONSIBILITY</span>
+          </div>
+        </a>
+        <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Toggle Sidebar (Desktop)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="sidebar-nav">
+        <!-- Section: Overview & Management -->
+        <div class="nav-section">
+          <div class="nav-section-title">Core Management</div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="dashboard.html" class="nav-link {% block nav_dashboard %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </span>
+                <span class="nav-text">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tasks.html" class="nav-link {% block nav_tasks %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
+                </span>
+                <span class="nav-text">Tasks & RACI</span>
+                <span class="nav-badge">12</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="team.html" class="nav-link {% block nav_team %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-text">RACI Matrix & Team</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="meetings.html" class="nav-link {% block nav_meetings %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-text">Meetings & Minutes</span>
+                <span class="nav-badge">2</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section: Insights & Setup -->
+        <div class="nav-section">
+          <div class="nav-section-title">Workspace</div>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="reports.html" class="nav-link {% block nav_reports %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-text">Responsibility Reports</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="settings.html" class="nav-link {% block nav_settings %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </span>
+                <span class="nav-text">Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer / Team Switcher -->
+      <div class="sidebar-footer">
+        <div class="team-pill">
+          <div class="team-avatar">NX</div>
+          <div class="team-info">
+            <span class="team-name">Alpha Engineering</span>
+            <span class="team-role">5 Active Members</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         2. APP MAIN WRAPPER (TOP NAV + PAGE CONTENT)
+         ==================================================================== -->
+    <div class="app-main-wrapper">
+      <!-- Top Navigation Bar -->
+      <header class="app-header">
+        <div class="header-left">
+          <!-- Mobile Hamburger Toggle -->
+          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          <!-- Quick Global Search Input -->
+          <div class="header-search">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input type="text" id="global-search-input" class="search-input" placeholder="Search tasks, RACI roles, meetings...">
+            <kbd class="search-kbd">Ctrl+K</kbd>
+          </div>
+        </div>
+
+        <!-- Header Actions & Profile -->
+        <div class="header-right">
+          <!-- Quick "+ New" Action Button -->
+          <button class="btn btn-primary btn-sm" data-modal-open="modal-new-task">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>New Task</span>
+          </button>
+
+          <!-- Light/Dark Mode Switcher -->
+          <button id="theme-toggle-btn" class="header-btn" title="Toggle Theme" aria-label="Toggle Light/Dark Theme">
+            <span class="theme-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </span>
+          </button>
+
+          <!-- Notifications Button with Badge & Dropdown -->
+          <div class="dropdown">
+            <button class="header-btn" data-dropdown-target="notifications-menu" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="header-badge">3</span>
+            </button>
+            <div id="notifications-menu" class="dropdown-menu" style="width: 300px;">
+              <div style="padding: 10px 14px; font-weight: 700; font-size: 0.875rem; border-bottom: 1px solid var(--border-color);">
+                Notifications
+              </div>
+              <div class="dropdown-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                <span style="font-weight: 600; font-size: 0.8125rem;">Assigned as Responsible (R)</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">API Auth Middleware task by Sarah Chen</span>
+              </div>
+              <div class="dropdown-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                <span style="font-weight: 600; font-size: 0.8125rem;">Meeting in 30 minutes</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Sprint Review & RACI Alignment</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a href="tasks.html" class="dropdown-item" style="justify-content: center; color: var(--color-primary); font-weight: 600;">
+                View All Responsibilities
+              </a>
+            </div>
+          </div>
+
+          <!-- User Profile Chip with Dropdown -->
+          <div class="dropdown user-profile-menu">
+            <button class="user-profile-btn" data-dropdown-target="user-dropdown-menu">
+              <div class="user-avatar-wrap">
+                <img src="{% static 'images/avatar-1.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-1.svg';" alt="Alex Morgan" class="user-avatar">
+                <span class="user-status-indicator"></span>
+              </div>
+              <div class="user-details">
+                <span class="user-name">Alex Morgan</span>
+                <span class="user-role-badge">Team Lead</span>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="user-dropdown-menu" class="dropdown-menu">
+              <a href="settings.html" class="dropdown-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>My Profile</span>
+              </a>
+              <a href="team.html" class="dropdown-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+                <span>Team Roles</span>
+              </a>
+              <a href="settings.html" class="dropdown-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Settings</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="login.html" class="dropdown-item" style="color: var(--color-danger);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Page Content Block -->
+      <main class="app-content">
+        {% block content %}
+        <!-- Child templates inject their unique page content here -->
+        {% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       3. GLOBAL MODAL: CREATE NEW TASK / RESPONSIBILITY
+       ==================================================================== -->
+  <div id="modal-new-task" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Create Responsibility Task</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+      <form id="new-task-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="task-input-title">Task / Responsibility Title</label>
+            <input type="text" id="task-input-title" class="form-input" placeholder="e.g., Implement OAuth2 Token Refresh" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-input-raci">RACI Role Assignment</label>
+            <select id="task-input-raci" class="form-select">
+              <option value="R">R — Responsible (The person who completes the task)</option>
+              <option value="A">A — Accountable (The sole decision maker who approves outcome)</option>
+              <option value="C">C — Consulted (Subject matter expert providing input)</option>
+              <option value="I">I — Informed (Kept updated on progress and results)</option>
+            </select>
+            <span class="form-hint">Every task should have exactly one Accountable owner.</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="task-input-assignee">Primary Assignee</label>
+              <select id="task-input-assignee" class="form-select">
+                <option value="Alex Morgan">Alex Morgan (Lead)</option>
+                <option value="Sarah Chen">Sarah Chen (Fullstack)</option>
+                <option value="Marcus Vance">Marcus Vance (Design)</option>
+                <option value="Elena Rostova">Elena Rostova (QA/Ops)</option>
+                <option value="David Kim">David Kim (Backend)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="task-input-priority">Priority</label>
+              <select id="task-input-priority" class="form-select">
+                <option value="Urgent">Urgent</option>
+                <option value="High" selected>High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-input-due">Due Date</label>
+            <input type="date" id="task-input-due" class="form-input">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Create & Assign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Core NEXFlow JavaScript -->
+  <script src="../js/main.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
