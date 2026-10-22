@@ -1,8 +1,8 @@
 /**
  * NEXFlow — Team Responsibility Management System
  * File: frontend/js/main.js
- * Description: Core global interactions (Sidebar, Theme, Dropdowns, Modals, Toasts)
- * Vanilla JavaScript (ES6+), zero frameworks, beginner-friendly.
+ * Description: Core global interactions (Sidebar, Theme, Dropdowns, Modals, Toasts, User Roles, DatePicker)
+ * Vanilla JavaScript (ES6+), zero external dependencies.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initModals();
   initSearch();
   initActiveNavLink();
+  initUserSession();
+  initDatePickerHelper();
+  initSettingsTabs();
 });
 
 /* --------------------------------------------------------------------------
@@ -81,41 +84,72 @@ function initSidebar() {
 
   if (!sidebar) return;
 
-  // Desktop sidebar collapse toggle
-  if (sidebarCollapseBtn) {
-    sidebarCollapseBtn.addEventListener('click', () => {
+  function toggleSidebarAction() {
+    if (window.innerWidth <= 768) {
+      sidebar.classList.toggle('mobile-open');
+      if (backdrop) backdrop.classList.toggle('active', sidebar.classList.contains('mobile-open'));
+    } else if (window.innerWidth <= 1024) {
+      sidebar.classList.toggle('tablet-expanded');
+      if (backdrop) backdrop.classList.toggle('active', sidebar.classList.contains('tablet-expanded'));
+    } else {
       sidebar.classList.toggle('collapsed');
       const isCollapsed = sidebar.classList.contains('collapsed');
       localStorage.setItem('nexflow-sidebar-collapsed', isCollapsed ? 'true' : 'false');
-    });
-
-    // Restore desktop collapsed state
-    if (window.innerWidth > 1024 && localStorage.getItem('nexflow-sidebar-collapsed') === 'true') {
-      sidebar.classList.add('collapsed');
     }
   }
 
-  // Mobile menu button toggle
-  if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-      sidebar.classList.add('mobile-open');
-      if (backdrop) backdrop.classList.add('active');
+  // Bind sidebar toggle button in header
+  if (sidebarCollapseBtn) {
+    sidebarCollapseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSidebarAction();
     });
   }
 
-  // Backdrop click closes mobile sidebar
+  // Fallback for mobile menu button if rendered separately
+  if (mobileMenuBtn && mobileMenuBtn !== sidebarCollapseBtn) {
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSidebarAction();
+    });
+  }
+
+  // Restore desktop collapsed state before clearing preload class
+  if (window.innerWidth > 1024 && localStorage.getItem('nexflow-sidebar-collapsed') === 'true') {
+    sidebar.classList.add('collapsed');
+  }
+
+  // Clean up preload flag after state is fully restored
+  document.documentElement.classList.remove('sidebar-collapsed-preload');
+
+  // Backdrop click closes mobile & tablet expanded sidebar
   if (backdrop) {
     backdrop.addEventListener('click', () => {
       sidebar.classList.remove('mobile-open');
+      sidebar.classList.remove('tablet-expanded');
       backdrop.classList.remove('active');
     });
   }
 
+  // Auto-close mobile/tablet drawer on link click
+  sidebar.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.remove('mobile-open');
+        sidebar.classList.remove('tablet-expanded');
+        if (backdrop) backdrop.classList.remove('active');
+      }
+    });
+  });
+
   // Window resize cleanup
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
+    if (window.innerWidth > 1024) {
       sidebar.classList.remove('mobile-open');
+      sidebar.classList.remove('tablet-expanded');
       if (backdrop) backdrop.classList.remove('active');
+    } else if (window.innerWidth > 768) {
+      sidebar.classList.remove('mobile-open');
     }
   });
 }
@@ -151,6 +185,14 @@ function initDropdowns() {
       });
     }
   });
+
+  // Auto-close dropdown menu when a dropdown-item is selected
+  document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const menu = item.closest('.dropdown-menu');
+      if (menu) menu.classList.remove('active');
+    });
+  });
 }
 
 /* --------------------------------------------------------------------------
@@ -182,9 +224,13 @@ function initModals() {
     });
   });
 
-  // ESC key to close active modal
+  // ESC key to close active modal (preserves date inputs, selects & textareas)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      if (document.activeElement && (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName))) {
+        document.activeElement.blur();
+        return;
+      }
       const activeModal = document.querySelector('.modal-backdrop.active');
       if (activeModal) closeModal(activeModal.id);
     }
@@ -226,18 +272,17 @@ function initSearch() {
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
-      // Emits custom event for specific pages to listen to
       window.dispatchEvent(new CustomEvent('nexflow-search', { detail: { query } }));
     });
   }
 }
 
 /* --------------------------------------------------------------------------
-   6. Active Navigation Link Detection
+   6. Active Navigation Link Detection (Sidebar links only)
    -------------------------------------------------------------------------- */
 function initActiveNavLink() {
   const currentPath = window.location.pathname;
-  const navLinks = document.querySelectorAll('.nav-link');
+  const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
 
   navLinks.forEach(link => {
     const href = link.getAttribute('href');
@@ -249,7 +294,183 @@ function initActiveNavLink() {
 }
 
 /* --------------------------------------------------------------------------
-   7. Global Toast Notification Helper
+   7. Settings Section Navigation Tabs
+   -------------------------------------------------------------------------- */
+function initSettingsTabs() {
+  const settingsLinks = document.querySelectorAll('.settings-nav .nav-link');
+  if (!settingsLinks.length) return;
+
+  function activateTabByHash(hash) {
+    if (!hash || !hash.startsWith('#')) return;
+    const targetLink = document.querySelector(`.settings-nav .nav-link[href="${hash}"]`);
+    const targetCard = document.getElementById(hash.substring(1));
+    if (targetLink) {
+      settingsLinks.forEach(l => l.classList.remove('active'));
+      targetLink.classList.add('active');
+    }
+    if (targetCard) {
+      setTimeout(() => {
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }
+
+  settingsLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      activateTabByHash(href);
+    });
+  });
+
+  if (window.location.hash) {
+    activateTabByHash(window.location.hash);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. Safe Date & Time Picker Interaction Helper
+   -------------------------------------------------------------------------- */
+function initDatePickerHelper() {
+  document.querySelectorAll('input[type="date"], input[type="time"]').forEach(dateInput => {
+    dateInput.addEventListener('click', function(e) {
+      if (typeof this.showPicker === 'function') {
+        try {
+          this.showPicker();
+        } catch (err) {
+          // Fallback if picker is already showing or not allowed
+        }
+      }
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   9. User Role Management & Session Persistence (Lead to Member switching)
+   -------------------------------------------------------------------------- */
+const NEXFLOW_DEFAULT_USERS = {
+  'alex.morgan@nexflow.io': {
+    name: 'Alex Morgan',
+    email: 'alex.morgan@nexflow.io',
+    role: 'Lead',
+    roleTitle: 'Team Lead',
+    avatar: '../images/avatar-1.svg'
+  },
+  'sarah.chen@nexflow.io': {
+    name: 'Sarah Chen',
+    email: 'sarah.chen@nexflow.io',
+    role: 'Member',
+    roleTitle: 'Team Member',
+    avatar: '../images/avatar-2.svg'
+  }
+};
+
+window.getCurrentUser = function() {
+  try {
+    const stored = localStorage.getItem('nexflow_user');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (err) {
+    console.error('Error reading nexflow_user from localStorage', err);
+  }
+  return NEXFLOW_DEFAULT_USERS['alex.morgan@nexflow.io'];
+};
+
+window.setCurrentUser = function(user) {
+  try {
+    localStorage.setItem('nexflow_user', JSON.stringify(user));
+  } catch (err) {
+    console.error('Error writing nexflow_user to localStorage', err);
+  }
+  applyUserSession(user);
+};
+
+window.switchUserRole = function(role) {
+  const user = window.getCurrentUser();
+  user.role = role;
+  user.roleTitle = role === 'Lead' ? 'Team Lead' : 'Team Member';
+  window.setCurrentUser(user);
+  showToast(`Switched active role to ${user.roleTitle}`, 'success', 2500);
+};
+
+window.toggleUserRole = function() {
+  const user = window.getCurrentUser();
+  const nextRole = user.role === 'Lead' ? 'Member' : 'Lead';
+  window.switchUserRole(nextRole);
+};
+
+function applyUserSession(user) {
+  if (!user) user = window.getCurrentUser();
+
+  // Update profile name, role badge, avatar in headers
+  document.querySelectorAll('.user-name').forEach(el => {
+    el.textContent = user.name;
+  });
+  document.querySelectorAll('.user-role-badge').forEach(el => {
+    el.textContent = user.roleTitle;
+  });
+  document.querySelectorAll('.user-avatar').forEach(img => {
+    if (user.avatar) img.src = user.avatar;
+  });
+
+  // Update team role pill in sidebar footer
+  document.querySelectorAll('.team-role').forEach(el => {
+    el.textContent = `${user.name} (${user.role})`;
+  });
+
+  // Update quick role toggle text in user dropdown
+  document.querySelectorAll('.role-toggle-text').forEach(el => {
+    el.textContent = user.role === 'Lead' ? 'Switch to Member Role' : 'Switch to Lead Role';
+  });
+
+  // Role-specific UI permissions
+  document.querySelectorAll('[data-role-required="Lead"]').forEach(el => {
+    if (user.role === 'Member') {
+      el.style.display = 'none';
+    } else {
+      el.style.display = '';
+    }
+  });
+
+  // Matrix table readonly state for Members
+  const matrixTable = document.querySelector('.matrix-table');
+  if (matrixTable) {
+    if (user.role === 'Member') {
+      matrixTable.classList.add('role-member-readonly');
+    } else {
+      matrixTable.classList.remove('role-member-readonly');
+    }
+  }
+
+  // Member-specific notification indicator
+  const memberIndicator = document.getElementById('role-indicator-banner');
+  if (memberIndicator) {
+    if (user.role === 'Member') {
+      memberIndicator.style.display = 'flex';
+      memberIndicator.textContent = 'Viewing as Team Member (Standard contributor permissions)';
+    } else {
+      memberIndicator.style.display = 'none';
+    }
+  }
+
+  // Populate profile inputs in Settings if active on settings page
+  const profileNameInput = document.getElementById('profile-name-input');
+  const profileEmailInput = document.getElementById('profile-email-input');
+  const profileRoleSelect = document.getElementById('profile-role-select');
+
+  if (profileNameInput) profileNameInput.value = user.name;
+  if (profileEmailInput) profileEmailInput.value = user.email;
+  if (profileRoleSelect) profileRoleSelect.value = user.role;
+}
+
+function initUserSession() {
+  const user = window.getCurrentUser();
+  applyUserSession(user);
+}
+
+/* --------------------------------------------------------------------------
+   10. Global Toast Notification Helper
    -------------------------------------------------------------------------- */
 window.showToast = function(message, type = 'info', duration = 3000) {
   let container = document.getElementById('toast-container');

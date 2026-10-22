@@ -1,4 +1,4 @@
-<!-- {% load static %} -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -13,8 +13,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Core NEXFlow CSS -->
-  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
   
+  <!-- Instant Preload: Prevent Light/Dark Flickering & Sidebar Jumping -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('nexflow-theme');
+      if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+      if (t) document.documentElement.setAttribute('data-theme', t);
+      var c = localStorage.getItem('nexflow-sidebar-collapsed');
+      if (c === 'true' && window.innerWidth > 1024) document.documentElement.classList.add('sidebar-collapsed-preload');
+    })();
+  </script>
+
   {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -28,18 +39,13 @@
     <aside id="app-sidebar" class="app-sidebar">
       <!-- Sidebar Brand Header -->
       <div class="sidebar-header">
-        <a href="dashboard.html" class="brand-link">
-          <img src="{% static 'images/logo-icon.svg' %}" onerror="this.onerror=null;this.src='../images/logo-icon.svg';" alt="NEXFlow Icon" class="brand-icon">
+        <a href="{% url 'dashboard' %}" class="brand-link">
+          <img src="{% static 'images/logo-icon.svg' %}" alt="NEXFlow Icon" class="brand-icon">
           <div class="brand-text">
             <span class="brand-name">NEX<span>Flow</span></span>
             <span class="brand-badge">RESPONSIBILITY</span>
           </div>
         </a>
-        <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Toggle Sidebar (Desktop)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
       </div>
 
       <!-- Navigation Links -->
@@ -49,7 +55,7 @@
           <div class="nav-section-title">Core Management</div>
           <ul class="nav-list">
             <li class="nav-item">
-              <a href="dashboard.html" class="nav-link {% block nav_dashboard %}{% endblock %}">
+              <a href="{% url 'dashboard' %}" class="nav-link {% block nav_dashboard %}{% endblock %}">
                 <span class="nav-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="7" height="7"></rect>
@@ -62,7 +68,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="tasks.html" class="nav-link {% block nav_tasks %}{% endblock %}">
+              <a href="{% url 'tasks' %}" class="nav-link {% block nav_tasks %}{% endblock %}">
                 <span class="nav-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 11l3 3L22 4"></path>
@@ -70,11 +76,10 @@
                   </svg>
                 </span>
                 <span class="nav-text">Tasks & RACI</span>
-                <span class="nav-badge">12</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="team.html" class="nav-link {% block nav_team %}{% endblock %}">
+              <a href="{% url 'team' %}" class="nav-link {% block nav_team %}{% endblock %}">
                 <span class="nav-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -87,7 +92,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="meetings.html" class="nav-link {% block nav_meetings %}{% endblock %}">
+              <a href="{% url 'meetings' %}" class="nav-link {% block nav_meetings %}{% endblock %}">
                 <span class="nav-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -97,7 +102,16 @@
                   </svg>
                 </span>
                 <span class="nav-text">Meetings & Minutes</span>
-                <span class="nav-badge">2</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'leaderboard' %}" class="nav-link {% block nav_leaderboard %}{% endblock %}">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </span>
+                <span class="nav-text">Leaderboard</span>
               </a>
             </li>
           </ul>
@@ -108,7 +122,7 @@
           <div class="nav-section-title">Workspace</div>
           <ul class="nav-list">
             <li class="nav-item">
-              <a href="reports.html" class="nav-link {% block nav_reports %}{% endblock %}">
+              <a href="{% url 'reports' %}" class="nav-link {% block nav_reports %}{% endblock %}">
                 <span class="nav-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -120,7 +134,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="settings.html" class="nav-link {% block nav_settings %}{% endblock %}">
+              <a href="{% url 'settings' %}" class="nav-link {% block nav_settings %}{% endblock %}">
                 <span class="nav-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="3"></circle>
@@ -139,8 +153,8 @@
         <div class="team-pill">
           <div class="team-avatar">NX</div>
           <div class="team-info">
-            <span class="team-name">Alpha Engineering</span>
-            <span class="team-role">5 Active Members</span>
+            <span class="team-name">{{ current_user.department|default:"Alpha Engineering" }}</span>
+            <span class="team-role">{{ current_role|default:"Lead" }}</span>
           </div>
         </div>
       </div>
@@ -153,9 +167,9 @@
       <!-- Top Navigation Bar -->
       <header class="app-header">
         <div class="header-left">
-          <!-- Mobile Hamburger Toggle -->
-          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Navigation">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Sidebar Toggle Button (Positioned in Header outside Sidebar) -->
+          <button id="sidebar-collapse-btn" class="sidebar-toggle-btn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -170,14 +184,15 @@
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </span>
-            <input type="text" id="global-search-input" class="search-input" placeholder="Search tasks, RACI roles, meetings...">
-            <kbd class="search-kbd">Ctrl+K</kbd>
+            <input type="text" id="global-search-input" class="search-input" placeholder="Search ">
+            <kbd class="search-kbd"></kbd>
           </div>
         </div>
 
         <!-- Header Actions & Profile -->
         <div class="header-right">
-          <!-- Quick "+ New" Action Button -->
+          <!-- Quick "+ New" Action Button (Authorities & Leads only) -->
+          {% if can_assign_tasks %}
           <button class="btn btn-primary btn-sm" data-modal-open="modal-new-task">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -185,6 +200,7 @@
             </svg>
             <span>New Task</span>
           </button>
+          {% endif %}
 
           <!-- Light/Dark Mode Switcher -->
           <button id="theme-toggle-btn" class="header-btn" title="Toggle Theme" aria-label="Toggle Light/Dark Theme">
@@ -202,66 +218,83 @@
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
               </svg>
-              <span class="header-badge">3</span>
+              <span class="header-badge">1</span>
             </button>
             <div id="notifications-menu" class="dropdown-menu" style="width: 300px;">
               <div style="padding: 10px 14px; font-weight: 700; font-size: 0.875rem; border-bottom: 1px solid var(--border-color);">
                 Notifications
               </div>
               <div class="dropdown-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                <span style="font-weight: 600; font-size: 0.8125rem;">Assigned as Responsible (R)</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">API Auth Middleware task by Sarah Chen</span>
-              </div>
-              <div class="dropdown-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                <span style="font-weight: 600; font-size: 0.8125rem;">Meeting in 30 minutes</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Sprint Review & RACI Alignment</span>
+                <span style="font-weight: 600; font-size: 0.8125rem;">RACI Role Assignment</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Assigned as Responsible for deliverables</span>
               </div>
               <div class="dropdown-divider"></div>
-              <a href="tasks.html" class="dropdown-item" style="justify-content: center; color: var(--color-primary); font-weight: 600;">
-                View All Responsibilities
+              <a href="{% url 'tasks' %}" class="dropdown-item" style="justify-content: center; color: var(--color-primary); font-weight: 600;">
+                View Responsibilities
               </a>
             </div>
           </div>
 
-          <!-- User Profile Chip with Dropdown -->
           <div class="dropdown user-profile-menu">
             <button class="user-profile-btn" data-dropdown-target="user-dropdown-menu">
               <div class="user-avatar-wrap">
-                <img src="{% static 'images/avatar-1.svg' %}" onerror="this.onerror=null;this.src='../images/avatar-1.svg';" alt="Alex Morgan" class="user-avatar">
+                <img src="{% static current_user.avatar|default:'images/avatar-1.svg' %}" alt="{{ current_user.display_name|default:'User' }}" class="user-avatar">
                 <span class="user-status-indicator"></span>
               </div>
               <div class="user-details">
-                <span class="user-name">Alex Morgan</span>
-                <span class="user-role-badge">Team Lead</span>
+                <span class="user-name">{{ current_user.display_name|default:"Alex Morgan" }}</span>
+                <span class="user-role-badge">{{ current_role|default:"Lead" }}</span>
               </div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
             <div id="user-dropdown-menu" class="dropdown-menu">
-              <a href="settings.html" class="dropdown-item">
+              <div style="padding: 8px 14px; font-size: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+                Signed in as <strong>{{ current_role|default:"Lead" }}</strong>
+              </div>
+              <a href="{% url 'settings' %}" class="dropdown-item">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <span>My Profile</span>
               </a>
-              <a href="team.html" class="dropdown-item">
+              <a href="{% url 'team' %}" class="dropdown-item">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
                 </svg>
-                <span>Team Roles</span>
+                <span>Team Directory</span>
               </a>
-              <a href="settings.html" class="dropdown-item">
+              <a href="{% url 'leaderboard' %}" class="dropdown-item">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="3"></circle>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                 </svg>
-                <span>Settings</span>
+                <span>Leaderboard</span>
               </a>
+
               <div class="dropdown-divider"></div>
-              <a href="login.html" class="dropdown-item" style="color: var(--color-danger);">
+              <div style="padding: 6px 14px; font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Switch Demo Role</div>
+              <a href="{% url 'demo_login' 'authority' %}" class="dropdown-item" style="font-size: 0.8125rem;">
+                <span class="badge" style="background: rgba(147, 51, 234, 0.15); color: #9333ea; font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;">AUTH</span>
+                Alexa (Authority)
+              </a>
+              <a href="{% url 'demo_login' 'lead' %}" class="dropdown-item" style="font-size: 0.8125rem;">
+                <span class="badge" style="background: rgba(79, 70, 229, 0.15); color: #4f46e5; font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;">LEAD</span>
+                Alex (Lead)
+              </a>
+              <a href="{% url 'demo_login' 'member' %}" class="dropdown-item" style="font-size: 0.8125rem;">
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;">MEM</span>
+                Sarah (Member)
+              </a>
+              <a href="{% url 'demo_login' 'learner' %}" class="dropdown-item" style="font-size: 0.8125rem;">
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;">LRN</span>
+                Leo (Learner)
+              </a>
+
+              <div class="dropdown-divider"></div>
+              <a href="{% url 'logout' %}" class="dropdown-item" style="color: var(--color-danger);">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
@@ -276,6 +309,17 @@
 
       <!-- Main Page Content Block -->
       <main class="app-content">
+        {% if messages %}
+        <div class="messages-container" style="margin-bottom: 20px;">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}" style="padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 10px; background: var(--bg-card); border-left: 4px solid var(--color-primary); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); font-size: 0.875rem; color: var(--text-primary);">
+            <span>{{ message }}</span>
+            <button type="button" onclick="this.parentElement.remove();" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; line-height: 1;">&times;</button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
         {% block content %}
         <!-- Child templates inject their unique page content here -->
         {% endblock %}
@@ -292,46 +336,57 @@
         <h3 class="modal-title">Create Responsibility Task</h3>
         <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
       </div>
-      <form id="new-task-form">
+      <form id="new-task-form" action="{% url 'task_create' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label" for="task-input-title">Task / Responsibility Title</label>
-            <input type="text" id="task-input-title" class="form-input" placeholder="e.g., Implement OAuth2 Token Refresh" required>
+            <input type="text" id="task-input-title" name="title" class="form-input" placeholder="e.g., Implement OAuth2 Token Refresh" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="task-input-raci">RACI Role Assignment</label>
-            <select id="task-input-raci" class="form-select">
+            <select id="task-input-raci" name="raci_role" class="form-select">
               <option value="R">R — Responsible (The person who completes the task)</option>
               <option value="A">A — Accountable (The sole decision maker who approves outcome)</option>
               <option value="C">C — Consulted (Subject matter expert providing input)</option>
               <option value="I">I — Informed (Kept updated on progress and results)</option>
             </select>
-            <span class="form-hint">Every task should have exactly one Accountable owner.</span>
+            <span class="form-hint">Every task should have an assigned RACI responsibility owner.</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
             <div class="form-group">
               <label class="form-label" for="task-input-assignee">Primary Assignee</label>
-              <select id="task-input-assignee" class="form-select">
-                <option value="Alex Morgan">Alex Morgan (Lead)</option>
-                <option value="Sarah Chen">Sarah Chen (Fullstack)</option>
-                <option value="Marcus Vance">Marcus Vance (Design)</option>
-                <option value="Elena Rostova">Elena Rostova (QA/Ops)</option>
-                <option value="David Kim">David Kim (Backend)</option>
+              <select id="task-input-assignee" name="assigned_to" class="form-select" required>
+                <option value="">Select Assignee</option>
+                {% if team_members %}
+                  {% for u in team_members %}
+                  <option value="{{ u.id }}">{{ u.display_name }} ({{ u.role }})</option>
+                  {% endfor %}
+                {% else %}
+                  <option value="3">Sarah Chen (Member)</option>
+                  <option value="4">Leo Brooks (Learner)</option>
+                  <option value="2">Alex Morgan (Lead)</option>
+                  <option value="1">Alexa Vance (Authority)</option>
+                {% endif %}
               </select>
             </div>
             <div class="form-group">
               <label class="form-label" for="task-input-priority">Priority</label>
-              <select id="task-input-priority" class="form-select">
-                <option value="Urgent">Urgent</option>
-                <option value="High" selected>High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
+              <select id="task-input-priority" name="priority" class="form-select">
+                <option value="URGENT">Urgent</option>
+                <option value="HIGH" selected>High</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="LOW">Low</option>
               </select>
             </div>
           </div>
           <div class="form-group">
             <label class="form-label" for="task-input-due">Due Date</label>
-            <input type="date" id="task-input-due" class="form-input">
+            <input type="date" id="task-input-due" name="due_date" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-input-desc">Requirements & Description</label>
+            <textarea id="task-input-desc" name="description" class="form-textarea" rows="2" placeholder="Task requirements, success criteria, and deliverables..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -346,7 +401,7 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core NEXFlow JavaScript -->
-  <script src="../js/main.js"></script>
+  <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

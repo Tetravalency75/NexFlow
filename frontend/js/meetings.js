@@ -61,8 +61,12 @@ function initScheduleMeetingForm() {
   const form = document.getElementById('schedule-meeting-form');
   if (!form) return;
 
+  let isSubmitting = false;
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     const title = document.getElementById('meeting-input-title').value.trim();
     const date = document.getElementById('meeting-input-date').value;
     const time = document.getElementById('meeting-input-time').value;
@@ -72,8 +76,19 @@ function initScheduleMeetingForm() {
       return;
     }
 
-    closeModal('modal-schedule-meeting');
-    form.reset();
-    showToast(`Meeting "${title}" scheduled for ${date} at ${time}! Calendar invites sent.`, 'success');
+    isSubmitting = true;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      closeModal('modal-schedule-meeting');
+      form.reset();
+      showToast(`Meeting "${title}" scheduled for ${date} at ${time}! Calendar invites sent.`, 'success');
+    } finally {
+      setTimeout(() => {
+        isSubmitting = false;
+        if (submitBtn) submitBtn.disabled = false;
+      }, 500);
+    }
   });
 }

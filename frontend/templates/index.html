@@ -14,6 +14,17 @@
   <!-- Core NEXFlow CSS -->
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/dashboard.css">
+
+  <!-- Instant Preload: Prevent Light/Dark Flickering & Sidebar Jumping -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('nexflow-theme');
+      if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+      if (t) document.documentElement.setAttribute('data-theme', t);
+      var c = localStorage.getItem('nexflow-sidebar-collapsed');
+      if (c === 'true' && window.innerWidth > 1024) document.documentElement.classList.add('sidebar-collapsed-preload');
+    })();
+  </script>
 </head>
 <body>
   <!-- Mobile Sidebar Backdrop Overlay -->
@@ -33,11 +44,6 @@
             <span class="brand-badge">RESPONSIBILITY</span>
           </div>
         </a>
-        <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Toggle Sidebar (Desktop)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
       </div>
 
       <!-- Navigation Links -->
@@ -98,6 +104,16 @@
                 <span class="nav-badge">2</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="leaderboard.html" class="nav-link">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </span>
+                <span class="nav-text">Leaderboard</span>
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -151,9 +167,9 @@
       <!-- Top Navigation Bar -->
       <header class="app-header">
         <div class="header-left">
-          <!-- Mobile Hamburger Toggle -->
-          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Navigation">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Sidebar Toggle Button (Positioned in Header outside Sidebar) -->
+          <button id="sidebar-collapse-btn" class="sidebar-toggle-btn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -168,8 +184,8 @@
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </span>
-            <input type="text" id="global-search-input" class="search-input" placeholder="Search tasks, RACI roles, meetings...">
-            <kbd class="search-kbd">Ctrl+K</kbd>
+            <input type="text" id="global-search-input" class="search-input" placeholder="Search">
+            <kbd class="search-kbd"></kbd>
           </div>
         </div>
 
@@ -258,6 +274,17 @@
                 </svg>
                 <span>Settings</span>
               </a>
+              <div class="dropdown-divider"></div>
+              <!-- Quick Role Toggle -->
+              <button class="role-toggle-btn" onclick="window.toggleUserRole(); this.closest('.dropdown-menu').classList.remove('active');">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <line x1="19" y1="8" x2="19" y2="14"></line>
+                  <line x1="22" y1="11" x2="16" y2="11"></line>
+                </svg>
+                <span class="role-toggle-text">Switch to Member Role</span>
+              </button>
               <div class="dropdown-divider"></div>
               <a href="login.html" class="dropdown-item" style="color: var(--color-danger);">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -425,87 +452,6 @@
                 </div>
               </div>
             </div>
-
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Priority Deliverables & Accountability</h2>
-                  <p class="card-subtitle">Urgent responsibilities requiring immediate review or completion</p>
-                </div>
-                <button class="btn btn-outline btn-sm" data-modal-open="modal-new-task">+ Add Task</button>
-              </div>
-
-              <div class="task-items-list">
-                <div class="task-item-row">
-                  <div class="task-left-info">
-                    <div class="task-checkbox-custom" title="Click to complete">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                    <div class="task-title-wrap">
-                      <span class="task-row-title">Finalize Multi-Tenant Role Isolation Schema</span>
-                      <div class="task-row-meta">
-                        <span class="badge badge-raci-r">R: David Kim</span>
-                        <span class="badge badge-raci-a">A: Alex Morgan</span>
-                        <span class="badge badge-urgent">Urgent</span>
-                        <span>Due Today</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="avatar-stack">
-                    <img src="../images/avatar-5.svg" class="avatar-item" alt="David Kim">
-                    <img src="../images/avatar-1.svg" class="avatar-item" alt="Alex Morgan">
-                  </div>
-                </div>
-
-                <div class="task-item-row">
-                  <div class="task-left-info">
-                    <div class="task-checkbox-custom" title="Click to complete">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                    <div class="task-title-wrap">
-                      <span class="task-row-title">Frontend Design System Tokens & Responsive Grid</span>
-                      <div class="task-row-meta">
-                        <span class="badge badge-raci-r">R: Marcus Vance</span>
-                        <span class="badge badge-raci-a">A: Sarah Chen</span>
-                        <span class="badge badge-high">High</span>
-                        <span>Tomorrow</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="avatar-stack">
-                    <img src="../images/avatar-3.svg" class="avatar-item" alt="Marcus Vance">
-                    <img src="../images/avatar-2.svg" class="avatar-item" alt="Sarah Chen">
-                  </div>
-                </div>
-
-                <div class="task-item-row">
-                  <div class="task-left-info">
-                    <div class="task-checkbox-custom" title="Click to complete">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                    <div class="task-title-wrap">
-                      <span class="task-row-title">Meeting Minutes & Action Items Automated Sync</span>
-                      <div class="task-row-meta">
-                        <span class="badge badge-raci-r">R: Elena Rostova</span>
-                        <span class="badge badge-raci-a">A: Alex Morgan</span>
-                        <span class="badge badge-medium">Medium</span>
-                        <span>In 3 days</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="avatar-stack">
-                    <img src="../images/avatar-4.svg" class="avatar-item" alt="Elena Rostova">
-                    <img src="../images/avatar-1.svg" class="avatar-item" alt="Alex Morgan">
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Right Column -->
@@ -579,39 +525,6 @@
                 </div>
                 <div class="progress-bar">
                   <div class="progress-fill" style="width: 42%;"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Responsibility Audit Trail</h2>
-                  <p class="card-subtitle">Latest changes in roles & assignments</p>
-                </div>
-              </div>
-
-              <div class="activity-stream">
-                <div class="activity-item">
-                  <span class="activity-icon-dot" style="background: var(--color-success-bg); color: var(--color-success);">✓</span>
-                  <div class="activity-body">
-                    <span class="activity-text"><strong>Sarah Chen</strong> completed <em>User Registration Flow</em></span>
-                    <span class="activity-time">15 mins ago</span>
-                  </div>
-                </div>
-                <div class="activity-item">
-                  <span class="activity-icon-dot" style="background: var(--color-primary-light); color: var(--color-primary);">R</span>
-                  <div class="activity-body">
-                    <span class="activity-text"><strong>Alex Morgan</strong> assigned <strong>David Kim</strong> as <em>Responsible</em> for Database Indexing</span>
-                    <span class="activity-time">1 hour ago</span>
-                  </div>
-                </div>
-                <div class="activity-item">
-                  <span class="activity-icon-dot" style="background: var(--color-warning-bg); color: var(--color-warning);">📅</span>
-                  <div class="activity-body">
-                    <span class="activity-text"><strong>Sprint Sync</strong> meeting scheduled for 3:00 PM</span>
-                    <span class="activity-time">2 hours ago</span>
-                  </div>
                 </div>
               </div>
             </div>

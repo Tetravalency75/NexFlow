@@ -1,310 +1,254 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="NEXFlow — Team Responsibility Management System. Reports & Analytics.">
-  <title>Responsibility Reports | NEXFlow</title>
+{% extends 'base.html' %}
+{% load static %}
 
-  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% block title %}Responsibility Reports & Analytics | NEXFlow{% endblock %}
+{% block nav_reports %}active{% endblock %}
 
-  <!-- Core NEXFlow CSS -->
-  <link rel="stylesheet" href="../css/main.css">
-</head>
-<body>
-  <!-- Mobile Sidebar Backdrop Overlay -->
-  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+{% block content %}
+<!-- Page Header Bar -->
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>Responsibility & Velocity Reports</h1>
+    <p>{{ scope_title }} &bull; Calculated in real-time from SQLite database records.</p>
+  </div>
+  <div class="page-actions-group">
+    <a href="{% url 'reports' %}" class="btn btn-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+      <span>Refresh Data</span>
+    </a>
+  </div>
+</div>
 
-  <div class="app-container">
-    <!-- 1. SIDEBAR NAVIGATION -->
-    <aside id="app-sidebar" class="app-sidebar">
-      <div class="sidebar-header">
-        <a href="index.html" class="brand-link">
-          <img src="../images/logo-icon.svg" alt="NEXFlow Icon" class="brand-icon">
-          <div class="brand-text">
-            <span class="brand-name">NEX<span>Flow</span></span>
-            <span class="brand-badge">RESPONSIBILITY</span>
-          </div>
-        </a>
-        <button id="sidebar-collapse-btn" class="sidebar-collapse-btn" title="Toggle Sidebar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="nav-section">
-          <div class="nav-section-title">Core Management</div>
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="index.html" class="nav-link">
-                <span class="nav-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                  </svg>
-                </span>
-                <span class="nav-text">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="tasks.html" class="nav-link">
-                <span class="nav-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                  </svg>
-                </span>
-                <span class="nav-text">Tasks & RACI</span>
-                <span class="nav-badge">12</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="team.html" class="nav-link">
-                <span class="nav-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                  </svg>
-                </span>
-                <span class="nav-text">RACI Matrix & Team</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="meetings.html" class="nav-link">
-                <span class="nav-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                </span>
-                <span class="nav-text">Meetings & Minutes</span>
-                <span class="nav-badge">2</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="nav-section">
-          <div class="nav-section-title">Workspace</div>
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="reports.html" class="nav-link active">
-                <span class="nav-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                </span>
-                <span class="nav-text">Responsibility Reports</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="settings.html" class="nav-link">
-                <span class="nav-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                  </svg>
-                </span>
-                <span class="nav-text">Settings</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="team-pill">
-          <div class="team-avatar">NX</div>
-          <div class="team-info">
-            <span class="team-name">Alpha Engineering</span>
-            <span class="team-role">5 Active Members</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- 2. APP MAIN WRAPPER -->
-    <div class="app-main-wrapper">
-      <header class="app-header">
-        <div class="header-left">
-          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Navigation">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
-          <div class="header-search">
-            <span class="search-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </span>
-            <input type="text" id="global-search-input" class="search-input" placeholder="Search tasks, RACI roles, meetings...">
-            <kbd class="search-kbd">Ctrl+K</kbd>
-          </div>
-        </div>
-
-        <div class="header-right">
-          <button id="theme-toggle-btn" class="header-btn" title="Toggle Theme">
-            <span class="theme-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
-            </span>
-          </button>
-
-          <div class="dropdown user-profile-menu">
-            <button class="user-profile-btn" data-dropdown-target="user-dropdown-menu">
-              <div class="user-avatar-wrap">
-                <img src="../images/avatar-1.svg" alt="Alex Morgan" class="user-avatar">
-                <span class="user-status-indicator"></span>
-              </div>
-              <div class="user-details">
-                <span class="user-name">Alex Morgan</span>
-                <span class="user-role-badge">Team Lead</span>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div id="user-dropdown-menu" class="dropdown-menu">
-              <a href="settings.html" class="dropdown-item">My Profile</a>
-              <a href="team.html" class="dropdown-item">Team Roles</a>
-              <div class="dropdown-divider"></div>
-              <a href="login.html" class="dropdown-item" style="color: var(--color-danger);">Sign Out</a>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main class="app-content">
-        <div class="page-header-bar">
-          <div class="page-title-group">
-            <h1>Responsibility Reports & Analytics</h1>
-            <p>Comprehensive audit of team delivery velocity, role balance, and accountability compliance.</p>
-          </div>
-          <div class="page-actions-group">
-            <button class="btn btn-secondary" onclick="showToast('Exporting analytics to CSV...', 'info', 2000);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              <span>Export CSV</span>
-            </button>
-            <button class="btn btn-primary" onclick="showToast('Generating executive PDF report...', 'success', 2500);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                <rect x="6" y="14" width="12" height="8"></rect>
-              </svg>
-              <span>Print / PDF</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="stats-grid" style="margin-bottom: 28px;">
-          <div class="card" style="display: flex; flex-direction: column; gap: 8px;">
-            <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">On-Time Delivery Rate</span>
-            <span style="font-size: 2rem; font-weight: 800; color: var(--color-success);">91.4%</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">+4.2% vs previous quarter</span>
-          </div>
-          <div class="card" style="display: flex; flex-direction: column; gap: 8px;">
-            <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Single Accountability Compliance</span>
-            <span style="font-size: 2rem; font-weight: 800; color: var(--color-primary);">100%</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">0 deliverables with multiple "A" owners</span>
-          </div>
-          <div class="card" style="display: flex; flex-direction: column; gap: 8px;">
-            <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Average Sign-Off Velocity</span>
-            <span style="font-size: 2rem; font-weight: 800; color: var(--color-accent);">1.3 Days</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">From Review to Complete</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Team RACI Contribution Breakdown</h2>
-              <p class="card-subtitle">Detailed breakdown of total completed deliverables per member</p>
-            </div>
-          </div>
-
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Team Member</th>
-                  <th>Responsible (R) Tasks</th>
-                  <th>Accountable (A) Roles</th>
-                  <th>Consulted (C) Contributions</th>
-                  <th>Informed (I) Updates</th>
-                  <th>Completion Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <img src="../images/avatar-1.svg" style="width: 28px; height: 28px; border-radius: 50%;" alt="Alex">
-                      <strong>Alex Morgan</strong>
-                    </div>
-                  </td>
-                  <td>4 Completed</td>
-                  <td>8 Approved</td>
-                  <td>6 Consulted</td>
-                  <td>12 Informed</td>
-                  <td><span class="badge badge-status-completed">98% Exceptional</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <img src="../images/avatar-2.svg" style="width: 28px; height: 28px; border-radius: 50%;" alt="Sarah">
-                      <strong>Sarah Chen</strong>
-                    </div>
-                  </td>
-                  <td>9 Completed</td>
-                  <td>3 Approved</td>
-                  <td>8 Consulted</td>
-                  <td>5 Informed</td>
-                  <td><span class="badge badge-status-completed">96% High Velocity</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <img src="../images/avatar-3.svg" style="width: 28px; height: 28px; border-radius: 50%;" alt="Marcus">
-                      <strong>Marcus Vance</strong>
-                    </div>
-                  </td>
-                  <td>6 Completed</td>
-                  <td>1 Approved</td>
-                  <td>4 Consulted</td>
-                  <td>8 Informed</td>
-                  <td><span class="badge badge-status-completed">92% On Track</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
+<!-- ====================================================================
+     1. HIGH LEVEL SUMMARY FIGURES
+     ==================================================================== -->
+<section class="stats-grid" style="margin-bottom: 28px;">
+  <!-- Metric 1: Total Deliverables -->
+  <div class="stat-card stat-primary">
+    <div class="stat-info">
+      <span class="stat-label">Total Deliverables</span>
+      <span class="stat-value">{{ total_tasks }}</span>
+      <span class="stat-trend neutral">Scope: {{ current_role }} view</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
     </div>
   </div>
 
-  <div id="toast-container" class="toast-container"></div>
-  <script src="../js/main.js"></script>
-</body>
-</html>
+  <!-- Metric 2: Completion Rate -->
+  <div class="stat-card stat-success">
+    <div class="stat-info">
+      <span class="stat-label">Completion Velocity</span>
+      <span class="stat-value">{{ done_pct }}%</span>
+      <span class="stat-trend positive">{{ done_count }} of {{ total_tasks }} done</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Metric 3: On-Time Rate -->
+  <div class="stat-card stat-accent">
+    <div class="stat-info">
+      <span class="stat-label">On-Time Deliverables</span>
+      <span class="stat-value">{{ on_time_pct }}%</span>
+      <span class="stat-trend {% if overdue_count == 0 %}positive{% else %}neutral{% endif %}">
+        {{ overdue_count }} overdue task(s)
+      </span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Metric 4: Proof Approval Rate -->
+  <div class="stat-card stat-warning">
+    <div class="stat-info">
+      <span class="stat-label">Proof Approval Rate</span>
+      <span class="stat-value">{{ proof_approved_pct }}%</span>
+      <span class="stat-trend positive">{{ proof_approved }} verified submissions</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     2. FIVE REPORT VISUALIZATIONS (PURE HTML/CSS - ZERO EXTERNAL LIBS)
+     ==================================================================== -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;" class="reports-grid">
+
+  <!-- GRAPH 1: TASK STATUS DISTRIBUTION -->
+  <div class="card" style="padding: 24px;">
+    <div style="margin-bottom: 18px;">
+      <h3 style="font-size: 1.0625rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">1. Task Status Distribution</h3>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin: 0;">Overall proportion of tasks in To Do, In Progress, and Completed states.</p>
+    </div>
+
+    <!-- Segmented CSS Bar -->
+    <div style="height: 24px; border-radius: var(--radius-sm); overflow: hidden; display: flex; background: var(--border-color); margin-bottom: 16px;">
+      <div style="width: {{ done_pct }}%; background: var(--color-success); transition: width 0.4s ease;" title="Done: {{ done_count }} ({{ done_pct }}%)"></div>
+      <div style="width: {{ in_prog_pct }}%; background: var(--color-primary); transition: width 0.4s ease;" title="In Progress: {{ in_prog_count }} ({{ in_prog_pct }}%)"></div>
+      <div style="width: {{ todo_pct }}%; background: #94a3b8; transition: width 0.4s ease;" title="To Do: {{ todo_count }} ({{ todo_pct }}%)"></div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+      <div style="padding: 10px; background: var(--bg-body); border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--color-success); font-weight: 700;">● Completed</div>
+        <div style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ done_count }}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-muted);">{{ done_pct }}% of tasks</div>
+      </div>
+      <div style="padding: 10px; background: var(--bg-body); border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--color-primary); font-weight: 700;">● In Progress</div>
+        <div style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ in_prog_count }}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-muted);">{{ in_prog_pct }}% of tasks</div>
+      </div>
+      <div style="padding: 10px; background: var(--bg-body); border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">● To Do</div>
+        <div style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ todo_count }}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-muted);">{{ todo_pct }}% of tasks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRAPH 2: COMPLETION TREND OVER TIME -->
+  <div class="card" style="padding: 24px;">
+    <div style="margin-bottom: 18px;">
+      <h3 style="font-size: 1.0625rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">2. Completion Trend (Velocity)</h3>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin: 0;">Completed deliverables across sprint timeline milestones.</p>
+    </div>
+
+    <!-- Pure CSS Vertical Bar Chart -->
+    <div style="height: 140px; display: flex; align-items: flex-end; justify-content: space-around; gap: 14px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px;">
+      {% for point in completion_trend %}
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-primary);">{{ point.completed }}</span>
+        <div style="width: 100%; max-width: 44px; height: {{ point.height_pct }}%; min-height: 8px; background: linear-gradient(180deg, var(--color-primary), #6366f1); border-radius: 4px 4px 0 0; transition: height 0.4s ease;" title="{{ point.label }}: {{ point.completed }} completed"></div>
+        <span style="font-size: 0.6875rem; color: var(--text-muted); white-space: nowrap;">{{ point.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- GRAPH 3: OVERDUE VS ON-TIME DELIVERABLES -->
+  <div class="card" style="padding: 24px;">
+    <div style="margin-bottom: 18px;">
+      <h3 style="font-size: 1.0625rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">3. Overdue vs. On-Time Tasks</h3>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin: 0;">Accountability adherence based on task target due dates.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; margin-bottom: 6px;">
+          <span style="font-weight: 600; color: var(--color-success);">✓ On-Time Deliverables</span>
+          <span style="font-weight: 700;">{{ on_time_count }} ({{ on_time_pct }}%)</span>
+        </div>
+        <div class="progress-bar" style="height: 12px;">
+          <div class="progress-fill" style="width: {{ on_time_pct }}%; background: var(--color-success);"></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; margin-bottom: 6px;">
+          <span style="font-weight: 600; color: var(--color-danger);">⚠ Overdue Deliverables</span>
+          <span style="font-weight: 700;">{{ overdue_count }} ({{ overdue_pct }}%)</span>
+        </div>
+        <div class="progress-bar" style="height: 12px;">
+          <div class="progress-fill" style="width: {{ overdue_pct }}%; background: var(--color-danger);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRAPH 5: PROOF OF WORK VERIFICATION STATUS -->
+  <div class="card" style="padding: 24px;">
+    <div style="margin-bottom: 18px;">
+      <h3 style="font-size: 1.0625rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">5. Proof-of-Work Verification</h3>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin: 0;">Breakdown of submitted proof deliverables across review statuses.</p>
+    </div>
+
+    <!-- Segmented verification bar -->
+    <div style="height: 24px; border-radius: var(--radius-sm); overflow: hidden; display: flex; background: var(--border-color); margin-bottom: 16px;">
+      <div style="width: {{ proof_approved_pct }}%; background: var(--color-success);" title="Approved: {{ proof_approved }}"></div>
+      <div style="width: {{ proof_pending_pct }}%; background: var(--color-warning);" title="Pending: {{ proof_pending }}"></div>
+      <div style="width: {{ proof_rejected_pct }}%; background: var(--color-danger);" title="Rejected: {{ proof_rejected }}"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+      <div style="padding: 10px; background: var(--bg-body); border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--color-success); font-weight: 700;">Approved</div>
+        <div style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ proof_approved }}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-muted);">{{ proof_approved_pct }}% of proofs</div>
+      </div>
+      <div style="padding: 10px; background: var(--bg-body); border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--color-warning); font-weight: 700;">Pending</div>
+        <div style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ proof_pending }}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-muted);">{{ proof_pending_pct }}% of proofs</div>
+      </div>
+      <div style="padding: 10px; background: var(--bg-body); border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--color-danger); font-weight: 700;">Rejected</div>
+        <div style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 2px 0;">{{ proof_rejected }}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-muted);">{{ proof_rejected_pct }}% of proofs</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- GRAPH 4: WORKLOAD BY MEMBER (FULL WIDTH) -->
+<section style="margin-bottom: 32px;">
+  <div class="card" style="padding: 24px;">
+    <div style="margin-bottom: 20px;">
+      <h3 style="font-size: 1.0625rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">4. Workload Distribution by Team Member</h3>
+      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin: 0;">Task volume and completion balance per team member.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      {% for item in member_workload %}
+      <div style="padding: 14px 18px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="team-avatar" style="width: 32px; height: 32px; font-size: 0.8125rem;">
+              {{ item.user.first_name|slice:":1" }}{{ item.user.last_name|slice:":1" }}
+            </div>
+            <div>
+              <span style="font-weight: 700; font-size: 0.875rem; color: var(--text-primary);">{{ item.user.display_name }}</span>
+              <span class="badge" style="margin-left: 6px; font-size: 0.6875rem; background: rgba(79, 70, 229, 0.1); color: var(--color-primary); padding: 2px 6px; border-radius: 4px;">{{ item.user.role }}</span>
+            </div>
+          </div>
+          <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-primary);">
+            {{ item.done }} / {{ item.total }} Completed
+          </span>
+        </div>
+        <div class="progress-bar" style="height: 10px;">
+          <div class="progress-fill" style="width: {{ item.bar_pct }}%;"></div>
+        </div>
+      </div>
+      {% empty %}
+      <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.8125rem;">
+        No workload statistics available.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

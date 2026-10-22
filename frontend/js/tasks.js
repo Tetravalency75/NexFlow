@@ -139,8 +139,11 @@ function initNewTaskForm() {
   const form = document.getElementById('new-task-form');
   if (!form) return;
 
+  let isSubmitting = false;
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
     
     const title = document.getElementById('task-input-title').value.trim();
     const raciRole = document.getElementById('task-input-raci').value;
@@ -153,46 +156,57 @@ function initNewTaskForm() {
       return;
     }
 
-    // Determine RACI badge classes
-    let raciClass = 'badge-raci-r';
-    let raciLabel = 'R - Responsible';
-    if (raciRole === 'A') { raciClass = 'badge-raci-a'; raciLabel = 'A - Accountable'; }
-    else if (raciRole === 'C') { raciClass = 'badge-raci-c'; raciLabel = 'C - Consulted'; }
-    else if (raciRole === 'I') { raciClass = 'badge-raci-i'; raciLabel = 'I - Informed'; }
+    isSubmitting = true;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-    // Create New Task Card in To Do Column
-    const newCard = document.createElement('div');
-    newCard.className = 'task-card';
-    newCard.setAttribute('draggable', 'true');
-    newCard.innerHTML = `
-      <div class="task-card-tags">
-        <span class="badge ${raciClass}">${raciLabel}</span>
-        <span class="badge badge-${priority.toLowerCase()}">${priority}</span>
-      </div>
-      <h4 class="task-card-title">${title}</h4>
-      <p class="task-card-desc">Assigned to ${assignee}. Added to current sprint workload.</p>
-      <div class="task-card-footer">
-        <span class="task-date">📅 ${dueDate || 'Tomorrow'}</span>
-        <div class="avatar-stack">
-          <img src="../images/avatar-1.svg" class="avatar-item" alt="Assignee">
+    try {
+      // Determine RACI badge classes
+      let raciClass = 'badge-raci-r';
+      let raciLabel = 'R - Responsible';
+      if (raciRole === 'A') { raciClass = 'badge-raci-a'; raciLabel = 'A - Accountable'; }
+      else if (raciRole === 'C') { raciClass = 'badge-raci-c'; raciLabel = 'C - Consulted'; }
+      else if (raciRole === 'I') { raciClass = 'badge-raci-i'; raciLabel = 'I - Informed'; }
+
+      // Create New Task Card in To Do Column
+      const newCard = document.createElement('div');
+      newCard.className = 'task-card';
+      newCard.setAttribute('draggable', 'true');
+      newCard.innerHTML = `
+        <div class="task-card-tags">
+          <span class="badge ${raciClass}">${raciLabel}</span>
+          <span class="badge badge-${priority.toLowerCase()}">${priority}</span>
         </div>
-      </div>
-    `;
+        <h4 class="task-card-title">${title}</h4>
+        <p class="task-card-desc">Assigned to ${assignee}. Added to current sprint workload.</p>
+        <div class="task-card-footer">
+          <span class="task-date">📅 ${dueDate || 'Tomorrow'}</span>
+          <div class="avatar-stack">
+            <img src="../images/avatar-1.svg" class="avatar-item" alt="Assignee">
+          </div>
+        </div>
+      `;
 
-    // Append to "To Do" or "Backlog" column
-    const backlogCol = document.querySelector('.col-backlog .kanban-card-list');
-    if (backlogCol) {
-      backlogCol.prepend(newCard);
+      // Append to "To Do" or "Backlog" column
+      const backlogCol = document.querySelector('.col-backlog .kanban-card-list');
+      if (backlogCol) {
+        backlogCol.prepend(newCard);
+      }
+
+      // Rebind drag & drop
+      initKanbanDragAndDrop();
+      updateColumnCounters();
+
+      // Close modal & reset form
+      closeModal('modal-new-task');
+      form.reset();
+      showToast(`Task "${title}" created and assigned!`, 'success');
+    } finally {
+      setTimeout(() => {
+        isSubmitting = false;
+        if (submitBtn) submitBtn.disabled = false;
+      }, 500);
     }
-
-    // Rebind drag & drop
-    initKanbanDragAndDrop();
-    updateColumnCounters();
-
-    // Close modal & reset form
-    closeModal('modal-new-task');
-    form.reset();
-    showToast(`Task "${title}" created and assigned!`, 'success');
   });
 }
 
