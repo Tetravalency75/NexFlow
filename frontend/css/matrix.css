@@ -1,0 +1,242 @@
+/* ==========================================================================
+   NEXFlow — Team Responsibility Management System
+   File: frontend/css/matrix.css
+   Description: RACI Responsibility Matrix grid, interactive assignment cells,
+                and Team Directory cards.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. RACI Matrix Container & Legend
+   -------------------------------------------------------------------------- */
+.raci-matrix-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-xs);
+}
+
+.raci-matrix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.raci-legend-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background-color: var(--bg-body);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.raci-pill-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+
+.raci-key {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.raci-key.key-r { background: var(--color-raci-r-bg); color: var(--color-raci-r); border: 1px solid var(--color-raci-r-border); }
+.raci-key.key-a { background: var(--color-raci-a-bg); color: var(--color-raci-a); border: 1px solid var(--color-raci-a-border); }
+.raci-key.key-c { background: var(--color-raci-c-bg); color: var(--color-raci-c); border: 1px solid var(--color-raci-c-border); }
+.raci-key.key-i { background: var(--color-raci-i-bg); color: var(--color-raci-i); border: 1px solid var(--color-raci-i-border); }
+
+/* --------------------------------------------------------------------------
+   2. Interactive RACI Matrix Table Grid
+   -------------------------------------------------------------------------- */
+.matrix-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.matrix-table th, .matrix-table td {
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+}
+
+.matrix-table th {
+  background-color: var(--bg-body);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.matrix-table th.deliverable-col {
+  text-align: left;
+  min-width: 260px;
+}
+
+.member-header-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.th-member-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.th-member-role {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.matrix-cell {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  min-width: 90px;
+}
+
+.matrix-cell:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.matrix-role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  font-size: 0.875rem;
+  transition: transform 0.15s ease;
+}
+
+.matrix-role-badge:hover {
+  transform: scale(1.15);
+}
+
+.matrix-role-empty {
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Team Directory Grid
+   -------------------------------------------------------------------------- */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.team-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition-fast);
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
+}
+
+.team-card-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  margin-bottom: 14px;
+  border: 3px solid var(--border-color);
+}
+
+.team-card-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.team-card-role {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.team-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-success);
+  margin: 8px 0 16px;
+}
+
+.status-dot-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-success);
+  box-shadow: 0 0 0 2px var(--color-success-bg);
+}
+
+.team-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.team-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-stat-num {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.team-stat-label {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}

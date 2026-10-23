@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | NEXFlow — Team Responsibility Management System{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header Bar -->
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>Team Responsibility Dashboard</h1>
+    <p>Real-time visibility into RACI assignments, deliverable ownership, and team capacity.</p>
+  </div>
+  <div class="page-actions-group">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+      <span>Refresh</span>
+    </a>
+    <a href="{% url 'tasks' %}" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"></path>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+      <span>View All Tasks</span>
+    </a>
+  </div>
+</div>
+
+<!-- ====================================================================
+     1. HIGH LEVEL METRIC CARDS (REAL DATABASE COUNTS)
+     ==================================================================== -->
+<section class="stats-grid">
+  <!-- Stat 1: Completed Tasks -->
+  <div class="stat-card stat-primary">
+    <div class="stat-info">
+      <span class="stat-label">Tasks Done</span>
+      <span class="stat-value">{{ done_tasks }}</span>
+      <span class="stat-trend positive">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        {{ done_pct }}% completion rate
+      </span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"></path>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stat 2: In Progress Tasks -->
+  <div class="stat-card stat-accent">
+    <div class="stat-info">
+      <span class="stat-label">In Progress</span>
+      <span class="stat-value">{{ in_progress_tasks }}</span>
+      <span class="stat-trend neutral">{{ in_prog_pct }}% of active workload</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stat 3: Total Deliverables -->
+  <div class="stat-card stat-success">
+    <div class="stat-info">
+      <span class="stat-label">Total Assigned</span>
+      <span class="stat-value">{{ total_tasks }}</span>
+      <span class="stat-trend positive">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        Across active workspace
+      </span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stat 4: Pending Verifications -->
+  <div class="stat-card stat-warning">
+    <div class="stat-info">
+      <span class="stat-label">Pending Proofs</span>
+      <span class="stat-value">{{ pending_proofs }}</span>
+      <span class="stat-trend neutral">Awaiting Authority review</span>
+    </div>
+    <div class="stat-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     2. DASHBOARD MAIN CONTENT GRID
+     ==================================================================== -->
+<div class="dashboard-grid">
+  <!-- LEFT COLUMN -->
+  <div class="dashboard-col">
+    <!-- Card 1: Task Status Breakdown -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Task Status</h2>
+          <p class="card-subtitle">Real-time delivery progress across active sprint tasks</p>
+        </div>
+        <a href="{% url 'tasks' %}" class="btn btn-ghost btn-sm">View Board &rarr;</a>
+      </div>
+
+      <!-- Segmented Bar Visual -->
+      <div class="status-distribution-bar" title="Task Status Breakdown">
+        <div class="status-segment status-segment-completed" style="width: {{ done_pct }}%;" title="Completed: {{ done_tasks }} ({{ done_pct }}%)"></div>
+        <div class="status-segment status-segment-progress" style="width: {{ in_prog_pct }}%;" title="In Progress: {{ in_progress_tasks }} ({{ in_prog_pct }}%)"></div>
+        <div class="status-segment status-segment-backlog" style="width: {{ todo_pct }}%;" title="To Do: {{ todo_tasks }} ({{ todo_pct }}%)"></div>
+      </div>
+
+      <!-- Status Legend & Metrics Grid -->
+      <div class="status-legend-grid">
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--color-success);"></span>
+            <span>Completed</span>
+          </div>
+          <div class="status-legend-count">{{ done_tasks }}</div>
+          <div class="status-legend-sub">{{ done_pct }}% of all tasks</div>
+        </div>
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--color-primary);"></span>
+            <span>In Progress</span>
+          </div>
+          <div class="status-legend-count">{{ in_progress_tasks }}</div>
+          <div class="status-legend-sub">{{ in_prog_pct }}% of all tasks</div>
+        </div>
+        <div class="status-legend-item">
+          <div class="status-legend-title">
+            <span class="status-dot" style="background-color: var(--text-muted);"></span>
+            <span>To Do</span>
+          </div>
+          <div class="status-legend-count">{{ todo_tasks }}</div>
+          <div class="status-legend-sub">{{ todo_pct }}% of all tasks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Assigned Deliverables List -->
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">{% if is_authority or is_lead %}Workspace Deliverables{% else %}My Assigned Tasks{% endif %}</h2>
+          <p class="card-subtitle">Real database tasks saved and assigned</p>
+        </div>
+        <a href="{% url 'tasks' %}" class="btn btn-ghost btn-sm">All Tasks &rarr;</a>
+      </div>
+
+      <div class="task-items-list">
+        {% for task in recent_tasks %}
+        <div class="task-item-row">
+          <div class="task-left-info">
+            <span class="badge badge-raci raci-{{ task.raci_role|lower }}" title="RACI: {{ task.get_raci_role_display }}">
+              {{ task.raci_role }}
+            </span>
+            <div class="task-title-wrap">
+              <span class="task-row-title" {% if task.status == 'DONE' %}style="text-decoration: line-through; opacity: 0.7;"{% endif %}>
+                {{ task.title }}
+              </span>
+              <div class="task-row-meta">
+                <span class="priority-pill priority-{{ task.priority|lower }}" style="font-size: 0.6875rem; padding: 1px 6px;">
+                  {{ task.get_priority_display }}
+                </span>
+                {% if task.project %}
+                <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--color-primary); font-size: 0.6875rem; padding: 1px 6px; border-radius: 4px;">
+                  📁 {{ task.project }}
+                </span>
+                {% endif %}
+                <span>👤 {{ task.assigned_to.display_name }}</span>
+                {% if task.due_date %}
+                <span>📅 Due {{ task.due_date|date:"M j" }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            {% if task.status == 'DONE' %}
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+            {% elif task.status == 'IN_PROGRESS' %}
+            <span class="badge" style="background: rgba(79, 70, 229, 0.15); color: var(--color-primary); font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+            {% else %}
+            <span class="badge" style="background: rgba(148, 163, 184, 0.15); color: var(--text-muted); font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+            {% endif %}
+              {{ task.get_status_display }}
+            </span>
+            {% if is_authority or is_lead or task.assigned_to == current_user %}
+            {% if task.status == 'TODO' %}
+            <form action="{% url 'task_update_status' task.id %}" method="POST" style="margin: 0;">
+              {% csrf_token %}
+              <input type="hidden" name="status" value="IN_PROGRESS">
+              <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 3px 8px;">Start &rarr;</button>
+            </form>
+            {% elif task.status == 'IN_PROGRESS' %}
+            <form action="{% url 'task_update_status' task.id %}" method="POST" style="margin: 0;">
+              {% csrf_token %}
+              <input type="hidden" name="status" value="DONE">
+              <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 3px 8px; background-color: var(--color-success); border-color: var(--color-success);">Done ✓</button>
+            </form>
+            {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 0.875rem;">
+          No deliverables assigned yet.
+          {% if can_assign_tasks %}
+          <div style="margin-top: 8px;">
+            <button class="btn btn-primary btn-sm" data-modal-open="modal-new-task">+ Create First Task</button>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="dashboard-col">
+    <!-- Card 2: Team Workload Capacity -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Team Capacity & Workload</h2>
+          <p class="card-subtitle">Active responsibility load per member</p>
+        </div>
+      </div>
+
+      {% if workload_data %}
+        {% for item in workload_data %}
+        <div class="workload-item">
+          <div class="workload-header">
+            <div class="workload-user">
+              <div class="team-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                {{ item.member.first_name|slice:":1" }}{{ item.member.last_name|slice:":1" }}
+              </div>
+              <div>
+                <span class="workload-name">{{ item.member.display_name }}</span>
+                <span class="workload-role">{{ item.member.job_title|default:item.member.role }}</span>
+              </div>
+            </div>
+            <span class="workload-badge workload-optimal">{{ item.count }} Tasks</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ item.pct }}%;"></div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="workload-item">
+          <div class="workload-header">
+            <div class="workload-user">
+              <div class="team-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                {{ current_user.first_name|slice:":1" }}{{ current_user.last_name|slice:":1" }}
+              </div>
+              <div>
+                <span class="workload-name">{{ current_user.display_name }}</span>
+                <span class="workload-role">{{ current_role }}</span>
+              </div>
+            </div>
+            <span class="workload-badge workload-optimal">{{ total_tasks }} Tasks Assigned</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ done_pct }}%;"></div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks.js' %}"></script>
+{% endblock %}

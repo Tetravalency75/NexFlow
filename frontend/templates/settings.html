@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}System & Team Settings | NEXFlow{% endblock %}
+{% block nav_settings %}active{% endblock %}
+
+{% block content %}
+<form action="{% url 'settings' %}" method="POST">
+  {% csrf_token %}
+  <!-- Page Header Bar -->
+  <div class="page-header-bar">
+    <div class="page-title-group">
+      <h1>System & Team Settings</h1>
+      <p>Configure workspace profile, customize RACI responsibility policies, and manage preferences.</p>
+    </div>
+    <div class="page-actions-group">
+      <button type="submit" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+        <span>Save Changes</span>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; align-items: start;">
+    <!-- Settings Navigation Sidebar -->
+    <div class="card" style="padding: 12px;">
+      <ul class="settings-nav">
+        <li><a href="#profile" class="nav-link active"><span>My Profile & Preferences</span></a></li>
+        <li><a href="#general" class="nav-link"><span>Team Workspace</span></a></li>
+        <li><a href="#raci-policy" class="nav-link"><span>RACI Governance Policy</span></a></li>
+      </ul>
+    </div>
+
+    <!-- Settings Main Content Column -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <!-- Section 1: My Profile & Preferences -->
+      <div class="card" id="profile">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">My Profile & Identity</h2>
+            <p class="card-subtitle">Manage personal information and view server-assigned governance role</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="first-name-input">First Name</label>
+            <input type="text" id="first-name-input" name="first_name" class="form-input" value="{{ current_user.first_name }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="last-name-input">Last Name</label>
+            <input type="text" id="last-name-input" name="last_name" class="form-input" value="{{ current_user.last_name }}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="profile-email-input">Work Email</label>
+          <input type="email" id="profile-email-input" class="form-input" value="{{ current_user.email }}" readonly style="background: var(--bg-body); cursor: not-allowed;">
+          <span class="form-hint">Email address is managed by workspace administrator.</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="job-title-input">Job Title / Specialty</label>
+            <input type="text" id="job-title-input" name="job_title" class="form-input" value="{{ current_user.job_title|default:'Senior Fullstack Developer' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dept-input">Department</label>
+            <input type="text" id="dept-input" name="department" class="form-input" value="{{ current_user.department|default:'Engineering' }}">
+          </div>
+        </div>
+
+        <!-- Server-governed Role Display (Tamper-Proof) -->
+        <div class="form-group">
+          <label class="form-label">Authorized Workspace Role (Server-Governed)</label>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="text" class="form-input" value="{{ current_role }}" readonly style="background: var(--bg-body); cursor: not-allowed; font-weight: 700; width: 200px;">
+            {% if is_authority %}
+            <span class="badge" style="background: rgba(147, 51, 234, 0.15); color: #9333ea; font-weight: 700; padding: 6px 12px; border-radius: 6px;">
+            {% elif is_lead %}
+            <span class="badge" style="background: rgba(79, 70, 229, 0.15); color: #4f46e5; font-weight: 700; padding: 6px 12px; border-radius: 6px;">
+            {% elif is_member %}
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 700; padding: 6px 12px; border-radius: 6px;">
+            {% else %}
+            <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; font-weight: 700; padding: 6px 12px; border-radius: 6px;">
+            {% endif %}
+              {{ current_role }} Privileges Enforced
+            </span>
+          </div>
+          <span class="form-hint">Roles determine server-side permissions and can only be modified by an authorized Authority.</span>
+        </div>
+      </div>
+
+      <!-- Section 2: Team Workspace -->
+      <div class="card" id="general">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Team Workspace Configuration</h2>
+            <p class="card-subtitle">Organization details and team identifiers</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Team Workspace Name</label>
+          <input type="text" class="form-input" value="Alpha Engineering Core">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Project Domain / Responsibility Scope</label>
+          <input type="text" class="form-input" value="NEXFlow Responsibility Architecture">
+        </div>
+      </div>
+
+      <!-- Section 3: RACI Responsibility Governance -->
+      <div class="card" id="raci-policy">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">RACI Responsibility Governance</h2>
+            <p class="card-subtitle">Rules to ensure clean accountability without overlap</p>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" checked style="margin-top: 4px;">
+            <div>
+              <strong style="font-size: 0.875rem; color: var(--text-primary);">Enforce Exactly One Accountable (A) Owner</strong>
+              <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">
+                Guarantees unambiguous ownership for every deliverable.
+              </p>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" checked style="margin-top: 4px;">
+            <div>
+              <strong style="font-size: 0.875rem; color: var(--text-primary);">Auto-Notify Informed (I) Stakeholders</strong>
+              <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">
+                Sends notifications to Informed members upon task completion.
+              </p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,445 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meetings & Minutes | NEXFlow{% endblock %}
+{% block nav_meetings %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/meetings.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header Bar -->
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>Meetings & Responsibility Minutes</h1>
+    <p>Manage sync sessions, track attendance RSVP & absence reasons, review official minutes, and convert action items into tasks.</p>
+  </div>
+  <div class="page-actions-group">
+    {% if can_create_meetings %}
+    <button class="btn btn-primary" data-modal-open="modal-schedule-meeting">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>Schedule Meeting</span>
+    </button>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ====================================================================
+     1. HOST ABSENCE NOTIFICATIONS (Visible to Meeting Hosts & Authorities)
+     ==================================================================== -->
+{% if notifications %}
+<section style="margin-bottom: 24px;">
+  <div class="card" style="padding: 20px; border-left: 4px solid var(--color-warning);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="font-size: 0.9375rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
+        Absence Alerts for Hosted Meetings
+      </h3>
+      <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px;">
+        {{ notifications|length }} Notification(s)
+      </span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      {% for notif in notifications %}
+      <div style="padding: 10px 14px; background: var(--bg-body); border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.8125rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <strong>{{ notif.attendee.display_name }}</strong> reported unable to attend <strong>{{ notif.meeting.title }}</strong>:
+          <span style="color: var(--text-secondary); margin-left: 4px;">"{{ notif.reason }}"</span>
+        </div>
+        <span style="font-size: 0.6875rem; color: var(--text-muted);">{{ notif.created_at|timesince }} ago</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ====================================================================
+     2. MEETINGS NAVIGATION TABS (Upcoming vs Past)
+     ==================================================================== -->
+<div class="meetings-tabs">
+  <button type="button" class="meeting-tab-btn {% if active_tab != 'past' %}active{% endif %}" data-target="upcoming" onclick="switchMeetingTab('upcoming');">
+    Upcoming Sessions ({{ upcoming_meetings|length }})
+  </button>
+  <button type="button" class="meeting-tab-btn {% if active_tab == 'past' %}active{% endif %}" data-target="past" onclick="switchMeetingTab('past');">
+    Past Meetings & Minutes ({{ past_meetings|length }})
+  </button>
+</div>
+
+<!-- ====================================================================
+     3. UPCOMING MEETINGS SECTION
+     ==================================================================== -->
+<section id="meetings-upcoming-list" class="meetings-list" style="margin-bottom: 32px; display: {% if active_tab == 'past' %}none{% else %}flex{% endif %};">
+  <div style="display: flex; flex-direction: column; gap: 18px; width: 100%;">
+    {% for meeting in upcoming_meetings %}
+    <div class="card" style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 14px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap;">
+            <a href="{% url 'meeting_detail' meeting.id %}" style="text-decoration: none;">
+              <h3 style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 0;">{{ meeting.title }}</h3>
+            </a>
+            <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: var(--color-primary); font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">
+              Hosted by {{ meeting.host.display_name }} ({{ meeting.host.role }})
+            </span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: var(--color-success); font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">
+              {{ meeting.get_mode_display }}
+            </span>
+          </div>
+          <div style="font-size: 0.8125rem; color: var(--text-muted); display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span>📅 {{ meeting.date|date:"l, F j, Y" }}</span>
+            <span>⏰ {{ meeting.start_time|time:"g:i A" }}{% if meeting.end_time %} &ndash; {{ meeting.end_time|time:"g:i A" }}{% endif %}</span>
+            <span>👥 {{ meeting.attendees.count }} Invited</span>
+            {% if meeting.location %}
+            <span>🏢 {{ meeting.location }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          {% if meeting.is_virtual and meeting.meeting_link %}
+          <a href="{% url 'meeting_join' meeting.id %}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+            <span>Join Meeting</span>
+          </a>
+          {% endif %}
+          <a href="{% url 'meeting_detail' meeting.id %}" class="btn btn-secondary btn-sm">
+            View Details & Minutes
+          </a>
+          {% if can_create_meetings and meeting.host == current_user or current_user.is_authority %}
+          <a href="{% url 'meeting_edit' meeting.id %}" class="btn btn-ghost btn-sm" title="Edit Meeting Parameters">
+            Edit
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Agenda snippet -->
+      {% if meeting.agenda %}
+      <div style="padding: 12px 14px; background: var(--bg-body); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 14px; white-space: pre-line;">
+        <strong>Agenda:</strong> {{ meeting.agenda }}
+      </div>
+      {% endif %}
+
+      <!-- Collapsible Section: RSVP, Attendance & Action Items -->
+      <div style="margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" class="meeting-details-grid">
+          
+          <!-- LEFT: Attendance Response Form -->
+          <div style="padding: 16px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h4 style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">Your Attendance RSVP</h4>
+            <form action="{% url 'attendance_submit' meeting.id %}" method="POST">
+              {% csrf_token %}
+              <div class="form-group" style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 0.75rem;">Status</label>
+                <select name="status" class="form-select" style="font-size: 0.8125rem; padding: 6px 10px;" onchange="toggleAbsenceReason(this, 'reason-{{ meeting.id }}');">
+                  <option value="ATTENDING">Attending ✓</option>
+                  <option value="ABSENT">Unable to Attend (Report Absence) ✕</option>
+                </select>
+              </div>
+              <div id="reason-{{ meeting.id }}" class="form-group" style="display: none; margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 0.75rem;">Absence Reason (Sent to Host)</label>
+                <textarea name="absence_reason" class="form-textarea" rows="2" placeholder="Brief reason why you cannot attend..." style="font-size: 0.8125rem;"></textarea>
+              </div>
+              <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; font-size: 0.75rem;">
+                Save RSVP Response
+              </button>
+            </form>
+          </div>
+
+          <!-- RIGHT: Action Items for this Meeting -->
+          <div style="padding: 16px; background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h4 style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin: 0;">Meeting Action Items</h4>
+              {% if can_assign_tasks or meeting.host == current_user %}
+              <button type="button" class="btn btn-ghost btn-sm" style="font-size: 0.6875rem; padding: 2px 6px;" onclick="openAddActionItem('{{ meeting.id }}');">
+                + Add Item
+              </button>
+              {% endif %}
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              {% for item in meeting.action_items.all %}
+              <div style="padding: 8px 12px; background: var(--bg-card); border-radius: 4px; font-size: 0.8125rem; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div>
+                  <div style="font-weight: 600; color: var(--text-primary);">{{ item.title|default:item.description }}</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted);">Owner: {{ item.owner.display_name }} {% if item.due_date %}&bull; Due: {{ item.due_date|date:"M j" }}{% endif %}</div>
+                </div>
+
+                {% if item.is_converted %}
+                <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px;">
+                  Task Created ✓
+                </span>
+                {% elif can_assign_tasks %}
+                <form action="{% url 'action_item_convert' item.id %}" method="POST" style="margin: 0;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 0.6875rem; padding: 3px 6px;" title="Convert this action item into an assigned Task">
+                    Convert to Task &rarr;
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+              {% empty %}
+              <div style="color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 12px;">
+                No action items recorded for this meeting.
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="card" style="padding: 40px; text-align: center; color: var(--text-muted);">
+      <p style="font-size: 0.9375rem; margin-bottom: 8px;">No scheduled meetings upcoming.</p>
+      {% if can_create_meetings %}
+      <button class="btn btn-primary btn-sm" data-modal-open="modal-schedule-meeting">Schedule Team Meeting</button>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ====================================================================
+     4. PAST MEETINGS & MINUTES SECTION
+     ==================================================================== -->
+<section id="meetings-past-list" class="meetings-list" style="margin-bottom: 32px; display: {% if active_tab == 'past' %}flex{% else %}none{% endif %};">
+  <div style="display: flex; flex-direction: column; gap: 18px; width: 100%;">
+    {% for meeting in past_meetings %}
+    <div class="card" style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 12px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+            <a href="{% url 'meeting_detail' meeting.id %}" style="text-decoration: none;">
+              <h3 style="font-size: 1.125rem; font-weight: 800; color: var(--text-primary); margin: 0;">{{ meeting.title }}</h3>
+            </a>
+            <span class="badge" style="background: rgba(100, 116, 139, 0.12); color: var(--text-secondary); font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">
+              Hosted by {{ meeting.host.display_name }}
+            </span>
+          </div>
+          <div style="font-size: 0.8125rem; color: var(--text-muted); display: flex; align-items: center; gap: 14px;">
+            <span>📅 {{ meeting.date|date:"l, F j, Y" }}</span>
+            <span>⏰ {{ meeting.start_time|time:"g:i A" }}</span>
+            <span>👥 {{ meeting.attendees.count }} Attendees</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <a href="{% url 'meeting_detail' meeting.id %}" class="btn btn-secondary btn-sm">
+            View Official Minutes & Action Items &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Minutes summary snippet -->
+      {% if meeting.official_minutes %}
+      <div style="padding: 12px 14px; background: var(--bg-body); border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary); font-size: 0.8125rem; margin-top: 10px;">
+        <strong style="color: var(--text-primary);">Discussion Summary:</strong>
+        <div style="color: var(--text-secondary); margin-top: 4px; white-space: pre-line;">{{ meeting.official_minutes.discussion_summary|truncatewords:40 }}</div>
+        {% if meeting.official_minutes.decisions_made %}
+        <div style="margin-top: 6px; font-weight: 600; color: var(--color-success);">
+          Decisions: {{ meeting.official_minutes.decisions_made|truncatewords:20 }}
+        </div>
+        {% endif %}
+      </div>
+      {% elif meeting.minutes %}
+      <div style="padding: 12px 14px; background: var(--bg-body); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--text-secondary); margin-top: 10px; white-space: pre-line;">
+        <strong>Recorded Notes:</strong> {{ meeting.minutes|truncatewords:40 }}
+      </div>
+      {% else %}
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+        No minutes recorded for this past meeting.
+      </div>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="card" style="padding: 40px; text-align: center; color: var(--text-muted);">
+      <p style="font-size: 0.9375rem;">No past meetings found in archives.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ====================================================================
+     5. SCHEDULE MEETING MODAL (Authorities & Leads)
+     ==================================================================== -->
+{% if can_create_meetings %}
+<div id="modal-schedule-meeting" class="modal-backdrop">
+  <div class="modal-dialog" style="max-width: 600px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Schedule Team Meeting</h3>
+      <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+    </div>
+    <form action="{% url 'meeting_create' %}" method="POST">
+      {% csrf_token %}
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="meeting-title">Meeting Title</label>
+          <input type="text" id="meeting-title" name="title" class="form-input" placeholder="e.g., Sprint Planning & RACI Review" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="meeting-desc">Description / Objectives</label>
+          <textarea id="meeting-desc" name="description" class="form-textarea" rows="2" placeholder="Brief context for attendees..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label" for="meeting-date">Date</label>
+            <input type="date" id="meeting-date" name="date" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="meeting-time">Start Time</label>
+            <input type="time" id="meeting-time" name="start_time" class="form-input" value="14:00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="meeting-end-time">End Time</label>
+            <input type="time" id="meeting-end-time" name="end_time" class="form-input" value="15:00">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label" for="meeting-mode">Mode</label>
+            <select id="meeting-mode" name="mode" class="form-select" onchange="toggleModeFields(this.value);">
+              <option value="VIRTUAL" selected>Virtual (Online Call)</option>
+              <option value="IN_PERSON">In-Person</option>
+            </select>
+          </div>
+          <div id="group-location" class="form-group" style="display: none;">
+            <label class="form-label" for="meeting-location">Location</label>
+            <input type="text" id="meeting-location" name="location" class="form-input" placeholder="e.g. Room 401">
+          </div>
+        </div>
+
+        <div id="group-meeting-link" class="form-group">
+          <label class="form-label" for="meeting-link">External Meeting URL (HTTPS)</label>
+          <input type="url" id="meeting-link" name="meeting_link" class="form-input" placeholder="https://meet.google.com/abc-defg-hij">
+          <span class="form-hint">Google Meet, Microsoft Teams, or Zoom URL.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="meeting-agenda">Agenda Topics</label>
+          <textarea id="meeting-agenda" name="agenda" class="form-textarea" rows="2" placeholder="Key deliverables, attendee inputs..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="meeting-attendees">Invited Attendees</label>
+          <select id="meeting-attendees" name="attendees" class="form-select" multiple size="4">
+            {% for u in team_members %}
+            <option value="{{ u.id }}">{{ u.display_name }} ({{ u.role }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Schedule Meeting</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<!-- Add Action Item Modal -->
+<div id="modal-add-action-item" class="modal-backdrop">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Record Meeting Action Item</h3>
+      <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-add-action-item" method="POST">
+      {% csrf_token %}
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="action-title-field">Action Item Title</label>
+          <input type="text" id="action-title-field" name="title" class="form-input" placeholder="Short title...">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="action-desc">Description</label>
+          <input type="text" id="action-desc" name="description" class="form-input" placeholder="Specific deliverable agreed upon..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="action-owner">Owner</label>
+          <select id="action-owner" name="owner" class="form-select" required>
+            {% for u in team_members %}
+            <option value="{{ u.id }}">{{ u.display_name }} ({{ u.role }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="action-due">Target Completion Date</label>
+          <input type="date" id="action-due" name="due_date" class="form-input">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Action Item</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/meetings.js' %}"></script>
+<script>
+  function switchMeetingTab(tab) {
+    var upcomingList = document.getElementById('meetings-upcoming-list');
+    var pastList = document.getElementById('meetings-past-list');
+    var btns = document.querySelectorAll('.meeting-tab-btn');
+
+    btns.forEach(function(b) {
+      if (b.getAttribute('data-target') === tab) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+
+    if (tab === 'past') {
+      if (upcomingList) upcomingList.style.display = 'none';
+      if (pastList) pastList.style.display = 'flex';
+    } else {
+      if (upcomingList) upcomingList.style.display = 'flex';
+      if (pastList) pastList.style.display = 'none';
+    }
+  }
+
+  function toggleAbsenceReason(selectEl, reasonId) {
+    var reasonBox = document.getElementById(reasonId);
+    if (reasonBox) {
+      reasonBox.style.display = (selectEl.value === 'ABSENT') ? 'block' : 'none';
+    }
+  }
+
+  function toggleModeFields(mode) {
+    var linkGroup = document.getElementById('group-meeting-link');
+    var locGroup = document.getElementById('group-location');
+    if (mode === 'IN_PERSON') {
+      if (locGroup) locGroup.style.display = 'block';
+    } else {
+      if (locGroup) locGroup.style.display = 'none';
+    }
+  }
+
+  function openAddActionItem(meetingId) {
+    var form = document.getElementById('form-add-action-item');
+    if (form) {
+      form.action = '/meetings/' + meetingId + '/action-items/';
+    }
+    var modal = document.getElementById('modal-add-action-item');
+    if (modal) {
+      modal.classList.add('active');
+    }
+  }
+</script>
+{% endblock %}

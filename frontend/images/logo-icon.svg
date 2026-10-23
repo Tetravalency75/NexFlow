@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <defs>
+    <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="50%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#icon-grad)" />
+  <!-- Hexagonal Flow Emblem -->
+  <path d="M 24 8 L 38 16 L 38 32 L 24 40 L 10 32 L 10 16 Z" stroke="#FFFFFF" stroke-width="2" fill="none" opacity="0.4" />
+  <path d="M 16 20 Q 24 14 32 24 T 24 34" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" />
+  <circle cx="24" cy="24" r="4" fill="#FFFFFF" />
+  <circle cx="34" cy="18" r="2.5" fill="#38BDF8" />
+</svg>

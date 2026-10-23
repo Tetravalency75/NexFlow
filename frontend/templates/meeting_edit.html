@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Meeting | {{ meeting.title }} | NEXFlow{% endblock %}
+{% block nav_meetings %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/meetings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>Edit Meeting Details</h1>
+    <p>Update meeting parameters, date, times, location, or virtual video conference URL.</p>
+  </div>
+  <div class="page-actions-group">
+    <a href="{% url 'meeting_detail' meeting.id %}" class="btn btn-secondary">
+      &larr; Back to Meeting
+    </a>
+  </div>
+</div>
+
+<div style="max-width: 800px; margin: 0 auto;">
+  <div class="card" style="padding: 30px;">
+    <form action="{% url 'meeting_edit' meeting.id %}" method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group" style="margin-bottom: 18px;">
+        <label class="form-label" for="id_title">Meeting Title</label>
+        <input type="text" id="id_title" name="title" class="form-input" value="{{ meeting.title }}" required>
+        {% if form.title.errors %}
+        <div style="color: var(--color-danger); font-size: 0.75rem; margin-top: 4px;">{{ form.title.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-bottom: 18px;">
+        <label class="form-label" for="id_description">Description / Objective</label>
+        <textarea id="id_description" name="description" class="form-textarea" rows="2">{{ meeting.description }}</textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 18px;">
+        <label class="form-label" for="id_agenda">Agenda & Discussion Topics</label>
+        <textarea id="id_agenda" name="agenda" class="form-textarea" rows="3">{{ meeting.agenda }}</textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+        <div class="form-group">
+          <label class="form-label" for="id_date">Date</label>
+          <input type="date" id="id_date" name="date" class="form-input" value="{{ meeting.date|date:'Y-m-d' }}" required>
+          {% if form.date.errors %}
+          <div style="color: var(--color-danger); font-size: 0.75rem; margin-top: 4px;">{{ form.date.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="id_start_time">Start Time</label>
+          <input type="time" id="id_start_time" name="start_time" class="form-input" value="{{ meeting.start_time|time:'H:i' }}" required>
+          {% if form.start_time.errors %}
+          <div style="color: var(--color-danger); font-size: 0.75rem; margin-top: 4px;">{{ form.start_time.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="id_end_time">End Time</label>
+          <input type="time" id="id_end_time" name="end_time" class="form-input" value="{% if meeting.end_time %}{{ meeting.end_time|time:'H:i' }}{% endif %}">
+          {% if form.end_time.errors %}
+          <div style="color: var(--color-danger); font-size: 0.75rem; margin-top: 4px;">{{ form.end_time.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+        <div class="form-group">
+          <label class="form-label" for="id_mode">Meeting Mode</label>
+          <select id="id_mode" name="mode" class="form-select">
+            <option value="VIRTUAL" {% if meeting.mode == 'VIRTUAL' %}selected{% endif %}>Virtual (Video Call)</option>
+            <option value="IN_PERSON" {% if meeting.mode == 'IN_PERSON' %}selected{% endif %}>In-Person</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="id_location">Physical Location (if In-Person)</label>
+          <input type="text" id="id_location" name="location" class="form-input" value="{{ meeting.location }}" placeholder="e.g. Lab 2, Conference Room A">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 18px;">
+        <label class="form-label" for="id_meeting_link">Virtual Meeting URL (HTTPS)</label>
+        <input type="url" id="id_meeting_link" name="meeting_link" class="form-input" value="{{ meeting.meeting_link }}" placeholder="https://meet.google.com/abc-defg-hij">
+        <span class="form-hint">Google Meet, Microsoft Teams, or Zoom URL.</span>
+        {% if form.meeting_link.errors %}
+        <div style="color: var(--color-danger); font-size: 0.75rem; margin-top: 4px;">{{ form.meeting_link.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label class="form-label" for="id_attendees">Invited Attendees</label>
+        <select id="id_attendees" name="attendees" class="form-select" multiple size="5">
+          {% for u in form.fields.attendees.queryset %}
+          <option value="{{ u.id }}" {% if u in meeting.attendees.all %}selected{% endif %}>
+            {{ u.display_name }} ({{ u.role }})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 20px;">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'meeting_detail' meeting.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+
+    <div style="margin-top: 28px; padding-top: 20px; border-top: 1px dashed var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="color: var(--color-danger); font-size: 0.875rem;">Cancel this meeting</strong>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Once cancelled, participants will no longer be able to join.</p>
+      </div>
+      <form action="{% url 'meeting_cancel' meeting.id %}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this meeting?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm">Cancel Meeting</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

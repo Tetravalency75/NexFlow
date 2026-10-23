@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RACI Matrix & Team Directory | NEXFlow{% endblock %}
+{% block nav_team %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/matrix.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>RACI Matrix & Team Directory</h1>
+    <p>Clarify roles, remove ambiguity, and ensure single-point accountability for every project deliverable.</p>
+  </div>
+</div>
+
+<!-- RACI Matrix Interactive Grid -->
+<section class="raci-matrix-container">
+  <div class="raci-matrix-header">
+    <div>
+      <h2 class="card-title">Responsibility Assignment Matrix (RACI)</h2>
+      <p class="card-subtitle">Click any cell to cycle through roles: <strong>R &rarr; A &rarr; C &rarr; I &rarr; Clear</strong></p>
+    </div>
+
+    <div class="raci-legend-strip">
+      <div class="raci-pill-item"><span class="raci-key key-r">R</span><span>Responsible (Doer)</span></div>
+      <div class="raci-pill-item"><span class="raci-key key-a">A</span><span>Accountable (Decider)</span></div>
+      <div class="raci-pill-item"><span class="raci-key key-c">C</span><span>Consulted (Expert)</span></div>
+      <div class="raci-pill-item"><span class="raci-key key-i">I</span><span>Informed (Updated)</span></div>
+    </div>
+  </div>
+
+  <div class="matrix-table-wrap">
+    <table class="matrix-table {% if not is_authority and not is_lead %}role-member-readonly{% endif %}">
+      <thead>
+        <tr>
+          <th class="matrix-col-deliverable">Project Deliverable / RACI Function</th>
+          {% for member in team_members %}
+          <th class="matrix-col-member">
+            <div class="member-header-cell">
+              <span class="th-member-name">{{ member.display_name }}</span>
+              <span class="th-member-role">{{ member.role }}</span>
+            </div>
+          </th>
+          {% empty %}
+          <th class="matrix-col-member">
+            <div class="member-header-cell">
+              <span class="th-member-name">{{ current_user.display_name }}</span>
+              <span class="th-member-role">{{ current_role }}</span>
+            </div>
+          </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="deliverable-col">
+            <strong class="deliverable-title">Database Architecture & Schema Migrations</strong>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">SQLite models, foreign keys, and safe schema migrations</div>
+          </td>
+          {% for member in team_members %}
+          <td class="matrix-cell" data-member="{{ member.display_name }}" data-raci-role="{% if forloop.first %}A{% elif forloop.counter == 2 %}C{% elif forloop.counter == 3 %}R{% else %}I{% endif %}"><span class="matrix-role-badge badge-raci-{% if forloop.first %}a{% elif forloop.counter == 2 %}c{% elif forloop.counter == 3 %}r{% else %}i{% endif %}">{% if forloop.first %}A{% elif forloop.counter == 2 %}C{% elif forloop.counter == 3 %}R{% else %}I{% endif %}</span></td>
+          {% empty %}
+          <td class="matrix-cell" data-member="{{ current_user.display_name }}" data-raci-role="A"><span class="matrix-role-badge badge-raci-a">A</span></td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td class="deliverable-col">
+            <strong class="deliverable-title">Proof-of-Work Verification Engine</strong>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Authority verification, non-self-approval rule, leaderboard sync</div>
+          </td>
+          {% for member in team_members %}
+          <td class="matrix-cell" data-member="{{ member.display_name }}" data-raci-role="{% if forloop.first %}A{% elif forloop.counter == 2 %}R{% elif forloop.counter == 3 %}C{% else %}I{% endif %}"><span class="matrix-role-badge badge-raci-{% if forloop.first %}a{% elif forloop.counter == 2 %}r{% elif forloop.counter == 3 %}c{% else %}i{% endif %}">{% if forloop.first %}A{% elif forloop.counter == 2 %}R{% elif forloop.counter == 3 %}C{% else %}I{% endif %}</span></td>
+          {% empty %}
+          <td class="matrix-cell" data-member="{{ current_user.display_name }}" data-raci-role="A"><span class="matrix-role-badge badge-raci-a">A</span></td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td class="deliverable-col">
+            <strong class="deliverable-title">Responsive Sidebar & System UI Components</strong>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Fluid desktop collapse, tablet drawer, and mobile menu alignment</div>
+          </td>
+          {% for member in team_members %}
+          <td class="matrix-cell" data-member="{{ member.display_name }}" data-raci-role="{% if forloop.first %}I{% elif forloop.counter == 2 %}A{% elif forloop.counter == 3 %}C{% else %}R{% endif %}"><span class="matrix-role-badge badge-raci-{% if forloop.first %}i{% elif forloop.counter == 2 %}a{% elif forloop.counter == 3 %}c{% else %}r{% endif %}">{% if forloop.first %}I{% elif forloop.counter == 2 %}A{% elif forloop.counter == 3 %}C{% else %}R{% endif %}</span></td>
+          {% empty %}
+          <td class="matrix-cell" data-member="{{ current_user.display_name }}" data-raci-role="R"><span class="matrix-role-badge badge-raci-r">R</span></td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td class="deliverable-col">
+            <strong class="deliverable-title">Meeting Minutes & Absence Notifications</strong>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">External meeting links, RSVP tracking, action item task conversion</div>
+          </td>
+          {% for member in team_members %}
+          <td class="matrix-cell" data-member="{{ member.display_name }}" data-raci-role="{% if forloop.first %}C{% elif forloop.counter == 2 %}A{% elif forloop.counter == 3 %}R{% else %}I{% endif %}"><span class="matrix-role-badge badge-raci-{% if forloop.first %}c{% elif forloop.counter == 2 %}a{% elif forloop.counter == 3 %}r{% else %}i{% endif %}">{% if forloop.first %}C{% elif forloop.counter == 2 %}A{% elif forloop.counter == 3 %}R{% else %}I{% endif %}</span></td>
+          {% empty %}
+          <td class="matrix-cell" data-member="{{ current_user.display_name }}" data-raci-role="I"><span class="matrix-role-badge badge-raci-i">I</span></td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Team Directory from SQLite Database -->
+<div class="page-header-bar" style="margin-top: 36px;">
+  <div class="page-title-group">
+    <h2>Team Directory & Roles</h2>
+    <p>Active workspace members across all 4 governance roles</p>
+  </div>
+</div>
+
+<div class="team-grid">
+  {% for member in team_members %}
+  <div class="team-card">
+    <div class="team-avatar" style="width: 48px; height: 48px; font-size: 1.125rem; margin-bottom: 12px;">
+      {{ member.first_name|slice:":1" }}{{ member.last_name|slice:":1" }}
+    </div>
+    <h3 class="team-card-name">{{ member.display_name }}</h3>
+    {% if member.role == 'Authority' %}
+    <span class="badge" style="margin-bottom: 6px; font-size: 0.75rem; background: rgba(147, 51, 234, 0.12); color: #9333ea; padding: 3px 10px; border-radius: 6px; font-weight: 700;">
+    {% elif member.role == 'Lead' %}
+    <span class="badge" style="margin-bottom: 6px; font-size: 0.75rem; background: rgba(79, 70, 229, 0.12); color: #4f46e5; padding: 3px 10px; border-radius: 6px; font-weight: 700;">
+    {% elif member.role == 'Member' %}
+    <span class="badge" style="margin-bottom: 6px; font-size: 0.75rem; background: rgba(16, 185, 129, 0.12); color: #10b981; padding: 3px 10px; border-radius: 6px; font-weight: 700;">
+    {% else %}
+    <span class="badge" style="margin-bottom: 6px; font-size: 0.75rem; background: rgba(245, 158, 11, 0.12); color: #f59e0b; padding: 3px 10px; border-radius: 6px; font-weight: 700;">
+    {% endif %}
+      {{ member.role }}
+    </span>
+    <span class="team-card-role" style="font-size: 0.8125rem; color: var(--text-secondary);">{{ member.job_title|default:member.department }}</span>
+    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+      Verified Score: <strong>{{ member.points }} pts</strong>
+    </span>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/matrix.js' %}"></script>
+{% endblock %}

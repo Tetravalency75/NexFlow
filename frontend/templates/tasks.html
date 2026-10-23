@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tasks & RACI Responsibilities | NEXFlow{% endblock %}
+{% block nav_tasks %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header Bar -->
+<div class="page-header-bar">
+  <div class="page-title-group">
+    <h1>Tasks & RACI Accountability</h1>
+    <p>Manage deliverables, assign RACI ownership, and submit proof of work for verification.</p>
+  </div>
+  <div class="page-actions-group">
+    <button class="btn btn-secondary" data-modal-open="modal-submit-proof">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="12" y1="18" x2="12" y2="12"></line>
+        <line x1="9" y1="15" x2="15" y2="15"></line>
+      </svg>
+      <span>Submit Proof of Work</span>
+    </button>
+    {% if can_assign_tasks %}
+    <button class="btn btn-primary" data-modal-open="modal-new-task">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>Create Task</span>
+    </button>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ====================================================================
+     1. ROLE PERMISSION NOTICE
+     ==================================================================== -->
+{% if not can_assign_tasks %}
+<div class="alert" style="margin-bottom: 20px; padding: 12px 16px; background: rgba(79, 70, 229, 0.08); border-left: 4px solid var(--color-primary); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between;">
+  <span>
+    Signed in as <strong>{{ current_role }}</strong>. Task creation and assignment are restricted to <strong>Authorities</strong> and <strong>Leads</strong>. You may update your assigned tasks and submit proof of work.
+  </span>
+  <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Assigned Contributor</span>
+</div>
+{% endif %}
+
+<!-- ====================================================================
+     2. 3-COLUMN KANBAN BOARD
+     ==================================================================== -->
+<div class="kanban-board">
+  <!-- COLUMN 1: TO DO -->
+  <div class="kanban-column" id="col-todo">
+    <div class="column-header">
+      <div class="column-title-wrap">
+        <span class="column-dot dot-todo"></span>
+        <h3 class="column-title">To Do</h3>
+        <span class="column-count">{{ todo_tasks|length }}</span>
+      </div>
+    </div>
+    <div class="column-body">
+      {% for task in todo_tasks %}
+      <div class="task-card">
+        <div class="card-top-row">
+          <span class="badge badge-raci raci-{{ task.raci_role|lower }}" title="RACI: {{ task.get_raci_role_display }}">
+            {{ task.raci_role }}
+          </span>
+          <span class="priority-pill priority-{{ task.priority|lower }}">
+            {{ task.get_priority_display }}
+          </span>
+          {% if task.project %}
+          <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--color-primary); font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px;" title="Project">
+            📁 {{ task.project }}
+          </span>
+          {% endif %}
+        </div>
+        <h4 class="task-title">{{ task.title }}</h4>
+        <p class="task-description">{{ task.description|default:"No description provided." }}</p>
+        <div class="card-meta">
+          <div class="card-assignee">
+            <div class="team-avatar" style="width: 24px; height: 24px; font-size: 0.6875rem;">
+              {{ task.assigned_to.first_name|slice:":1" }}{{ task.assigned_to.last_name|slice:":1" }}
+            </div>
+            <span class="assignee-name">{{ task.assigned_to.display_name }}</span>
+          </div>
+          {% if task.due_date %}
+          <span class="due-date {% if task.is_overdue %}overdue{% endif %}">
+            📅 {{ task.due_date|date:"M j" }}
+          </span>
+          {% endif %}
+        </div>
+        <!-- Status Progression Action -->
+        {% if is_authority or is_lead or task.assigned_to == current_user %}
+        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          {% if is_authority or is_lead and task.created_by == current_user %}
+          <form action="{% url 'task_delete' task.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete the task \'{{ task.title|escapejs }}\'? This action cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-sm" style="font-size: 0.75rem; padding: 4px 6px; color: var(--color-danger);" title="Delete Task">
+              ✕ Delete
+            </button>
+          </form>
+          {% else %}
+          <div></div>
+          {% endif %}
+          <form action="{% url 'task_update_status' task.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="status" value="IN_PROGRESS">
+            <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+              Start Task &rarr;
+            </button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 0.8125rem;">
+        No pending tasks in To Do.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- COLUMN 2: IN PROGRESS -->
+  <div class="kanban-column" id="col-in-progress">
+    <div class="column-header">
+      <div class="column-title-wrap">
+        <span class="column-dot dot-progress"></span>
+        <h3 class="column-title">In Progress</h3>
+        <span class="column-count">{{ in_progress_tasks|length }}</span>
+      </div>
+    </div>
+    <div class="column-body">
+      {% for task in in_progress_tasks %}
+      <div class="task-card">
+        <div class="card-top-row">
+          <span class="badge badge-raci raci-{{ task.raci_role|lower }}" title="RACI: {{ task.get_raci_role_display }}">
+            {{ task.raci_role }}
+          </span>
+          <span class="priority-pill priority-{{ task.priority|lower }}">
+            {{ task.get_priority_display }}
+          </span>
+          {% if task.project %}
+          <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--color-primary); font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px;" title="Project">
+            📁 {{ task.project }}
+          </span>
+          {% endif %}
+        </div>
+        <h4 class="task-title">{{ task.title }}</h4>
+        <p class="task-description">{{ task.description|default:"No description provided." }}</p>
+        <div class="card-meta">
+          <div class="card-assignee">
+            <div class="team-avatar" style="width: 24px; height: 24px; font-size: 0.6875rem;">
+              {{ task.assigned_to.first_name|slice:":1" }}{{ task.assigned_to.last_name|slice:":1" }}
+            </div>
+            <span class="assignee-name">{{ task.assigned_to.display_name }}</span>
+          </div>
+          {% if task.due_date %}
+          <span class="due-date {% if task.is_overdue %}overdue{% endif %}">
+            📅 {{ task.due_date|date:"M j" }}
+          </span>
+          {% endif %}
+        </div>
+        <!-- Status Progression Action -->
+        {% if is_authority or is_lead or task.assigned_to == current_user %}
+        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <button type="button" class="btn btn-ghost btn-sm" style="font-size: 0.75rem; padding: 4px 6px;" onclick="openProofForTask('{{ task.id }}', '{{ task.title|escapejs }}');">
+            + Proof
+          </button>
+          <form action="{% url 'task_update_status' task.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="status" value="DONE">
+            <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 4px 8px; background-color: var(--color-success); border-color: var(--color-success);">
+              Mark Done ✓
+            </button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 0.8125rem;">
+        No active tasks currently in progress.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- COLUMN 3: DONE -->
+  <div class="kanban-column" id="col-done">
+    <div class="column-header">
+      <div class="column-title-wrap">
+        <span class="column-dot dot-done"></span>
+        <h3 class="column-title">Done</h3>
+        <span class="column-count">{{ done_tasks|length }}</span>
+      </div>
+    </div>
+    <div class="column-body">
+      {% for task in done_tasks %}
+      <div class="task-card">
+        <div class="card-top-row">
+          <span class="badge badge-raci raci-{{ task.raci_role|lower }}" title="RACI: {{ task.get_raci_role_display }}">
+            {{ task.raci_role }}
+          </span>
+          <span class="priority-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+            Completed
+          </span>
+          {% if task.project %}
+          <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: var(--color-primary); font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px;" title="Project">
+            📁 {{ task.project }}
+          </span>
+          {% endif %}
+        </div>
+        <h4 class="task-title" style="text-decoration: line-through; opacity: 0.85;">{{ task.title }}</h4>
+        <p class="task-description">{{ task.description|default:"Deliverable finalized." }}</p>
+        <div class="card-meta">
+          <div class="card-assignee">
+            <div class="team-avatar" style="width: 24px; height: 24px; font-size: 0.6875rem;">
+              {{ task.assigned_to.first_name|slice:":1" }}{{ task.assigned_to.last_name|slice:":1" }}
+            </div>
+            <span class="assignee-name">{{ task.assigned_to.display_name }}</span>
+          </div>
+          {% if task.proof_submissions.count %}
+          <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: var(--color-primary); font-size: 0.6875rem; padding: 2px 6px; border-radius: 4px;">
+            {{ task.proof_submissions.count }} Proof(s)
+          </span>
+          {% endif %}
+        </div>
+        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openProofForTask('{{ task.id }}', '{{ task.title|escapejs }}');">
+            Submit Proof of Work
+          </button>
+        </div>
+      </div>
+      {% empty %}
+      <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 0.8125rem;">
+        No completed tasks yet.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     3. SUBMIT PROOF OF WORK MODAL
+     ==================================================================== -->
+<div id="modal-submit-proof" class="modal-backdrop">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Submit Proof of Work</h3>
+      <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+    </div>
+    <form action="{% url 'proof_submit' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="modal-body">
+        <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Submit tangible evidence (code PR, artifact, document) for Authority verification. Approved submissions earn <strong>+10 points</strong> on the live Leaderboard.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="proof-task-select">Related Task / Deliverable</label>
+          <select id="proof-task-select" name="task" class="form-select" required>
+            <option value="">Select Task...</option>
+            {% for t in tasks %}
+            <option value="{{ t.id }}">{{ t.title }} ({{ t.get_status_display }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="proof-desc">Description of Work Performed</label>
+          <textarea id="proof-desc" name="description" class="form-textarea" rows="3" placeholder="Explain milestones achieved, pull requests made, or deliverables completed..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="proof-url">Supporting URL / Repository Link</label>
+          <input type="url" id="proof-url" name="proof_url" class="form-input" placeholder="https://github.com/... or staging deployment link">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="proof-file">Artifact Document or Screenshot (Optional)</label>
+          <input type="file" id="proof-file" name="proof_file" class="form-input">
+          <span class="form-hint">Accepted: PDF, PNG, JPG, ZIP, DOCX (Max 10MB)</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit for Verification</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks.js' %}"></script>
+<script>
+  function openProofForTask(taskId, taskTitle) {
+    var select = document.getElementById('proof-task-select');
+    if (select) {
+      select.value = taskId;
+    }
+    var modal = document.getElementById('modal-submit-proof');
+    if (modal) {
+      modal.classList.add('active');
+    }
+  }
+</script>
+{% endblock %}
